@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stalled Pipeline Tracker</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f9f9f7;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+    }
+
+    .wrap { max-width: 1300px; margin: 0 auto; }
+
+    /* ── Top bar ── */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px;
+    }
+    .top-bar h1 { font-size: 20px; font-weight: 700; color: #1a1a1a; }
+
+    .date-picker-wrap {
+      display: flex; align-items: center; gap: 8px;
+      background: #fff; border: 1px solid #e0dfd8;
+      border-radius: 6px; padding: 5px 12px;
+    }
+    .date-picker-wrap label { font-size: 12px; color: #666; white-space: nowrap; }
+    .date-picker-wrap input[type="date"] {
+      font-size: 12px; border: none; background: transparent;
+      color: #1a1a1a; outline: none; cursor: pointer; font-family: inherit;
+    }
+    .date-picker-wrap input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer; opacity: 0.6;
+    }
+
+    .add-btn {
+      font-size: 13px; padding: 7px 16px; border-radius: 6px;
+      border: 1px solid #d0cfc8; background: #fff; color: #1a1a1a;
+      cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;
+    }
+    .add-btn:hover { background: #f3f3f0; }
+
+    /* ── Metrics ── */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+      gap: 10px; margin-bottom: 1.5rem;
+    }
+    .metric {
+      background: #fff; border-radius: 8px;
+      padding: 0.75rem 1rem; border: 1px solid #e8e7e0;
+    }
+    .metric-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+    .metric-val   { font-size: 22px; font-weight: 600; color: #1a1a1a; }
+
+    /* ── Filters ── */
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .filter-btn {
+      font-size: 12px; padding: 5px 13px; border-radius: 20px;
+      border: 1px solid #d0cfc8; background: transparent;
+      color: #666; cursor: pointer; transition: all 0.15s;
+    }
+    .filter-btn:hover { background: #f3f3f0; }
+    .filter-btn.active { background: #e8f0fe; color: #1a56db; border-color: #a4c0fb; }
+
+    /* ── Rep sections ── */
+    .rep-section { margin-bottom: 1.75rem; }
+    .rep-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.75rem; flex-wrap: wrap; gap: 8px;
+    }
+    .rep-info { display: flex; align-items: center; gap: 10px; }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #e8f0fe; display: flex; align-items: center;
+      justify-content: center; font-weight: 600; font-size: 13px;
+      color: #1a56db; flex-shrink: 0;
+    }
+    .rep-name  { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+    .rep-count { font-size: 12px; color: #888; }
+
+    .email-rep-btn {
+      font-size: 12px; padding: 6px 14px; border-radius: 6px;
+      border: 1px solid #a4c0fb; background: #e8f0fe;
+      color: #1a56db; cursor: pointer; display: flex; align-items: center;
+      gap: 5px; font-weight: 500;
+    }
+    .email-rep-btn:hover { opacity: 0.85; }
+
+    /* ── Table ── */
+    .table-wrap {
+      border: 1px solid #e8e7e0; border-radius: 8px;
+      overflow: hidden; background: #fff; overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 980px; }
+    th {
+      background: #f5f5f2; padding: 10px 12px; text-align: left;
+      font-weight: 500; font-size: 12px; color: #666;
+      border-bottom: 1px solid #e8e7e0; white-space: nowrap;
+    }
+    td {
+      padding: 8px 12px; border-bottom: 1px solid #e8e7e0;
+      color: #1a1a1a; vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafaf8; }
+    tr.launched td { opacity: 0.5; }
+    tr.launched td:nth-child(2) { text-decoration: line-through; color: #888; }
+
+    .col-launch  { width: 44px; }
+    .col-account { width: 14%; }
+    .col-reason  { width: 13%; }
+    .col-due     { width: 9%; }
+    .col-mgr     { width: 18%; }
+    .col-agent   { width: 18%; }
+    .col-called  { width: 76px; text-align: center; }
+    .col-actions { width: 84px; }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block; font-size: 11px; padding: 3px 9px;
+      border-radius: 20px; font-weight: 500; white-space: nowrap;
+    }
+    .badge-domain      { background: #dbeafe; color: #1e40af; }
+    .badge-edits       { background: #ede9fe; color: #4c1d95; }
+    .badge-unresponsive{ background: #fef3c7; color: #78350f; }
+    .badge-approval    { background: #f3f4f6; color: #374151; }
+    .badge-launching   { background: #dcfce7; color: #14532d; }
+    .badge-other       { background: #f3f4f6; color: #374151; }
+    .badge-launched    { background: #dcfce7; color: #14532d; }
+
+    .overdue { color: #b91c1c !important; font-weight: 600; }
+    .soon    { color: #b45309 !important; }
+
+    /* ── Buttons ── */
+    .action-btn {
+      font-size: 12px; padding: 4px 9px; border-radius: 5px;
+      border: 1px solid #e0dfd8; background: transparent;
+      color: #1a1a1a; cursor: pointer; margin-right: 3px;
+    }
+    .action-btn:hover { background: #f3f3f0; }
+
+    .launch-btn {
+      font-size: 15px; padding: 3px 8px; border-radius: 5px;
+      border: 1px solid #3B6D11; background: transparent;
+      color: #3B6D11; cursor: pointer; line-height: 1;
+      transition: background 0.15s;
+    }
+    .launch-btn:hover { background: #dcfce7; }
+    .launch-btn.done  {
+      background: #dcfce7; color: #14532d;
+      border-color: #14532d; cursor: default;
+    }
+
+    /* ── Notes ── */
+    .mgr-notes {
+      font-size: 12px; color: #555; line-height: 1.4; white-space: normal;
+    }
+    .agent-notes-input {
+      width: 100%; font-size: 12px; padding: 5px 8px;
+      border: 1px solid #e0dfd8; border-radius: 5px;
+      resize: none; min-height: 38px;
+      color: #1a1a1a; background: #fff;
+      font-family: inherit; line-height: 1.4;
+      transition: border-color 0.15s;
+    }
+    .agent-notes-input:focus   { outline: none; border-color: #a4c0fb; }
+    .agent-notes-input::placeholder { color: #aaa; }
+
+    /* ── Called checkbox ── */
+    .called-wrap {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 4px;
+    }
+    .called-cb    { width: 18px; height: 18px; cursor: pointer; accent-color: #16a34a; }
+    .called-label { font-size: 10px; color: #888; }
+    .called-yes   { font-size: 11px; font-weight: 600; color: #16a34a; }
+
+    /* ── Launched section ── */
+    .launched-section { margin-top: 1rem; }
+    .launched-toggle {
+      font-size: 12px; color: #888; cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      margin-bottom: 0.75rem; background: none; border: none; padding: 0;
+    }
+    .launched-toggle:hover { color: #1a1a1a; }
+
+    /* ── Modal ── */
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem; z-index: 100; overflow-y: auto;
+    }
+    .modal {
+      background: #fff; border-radius: 10px; border: 1px solid #e0dfd8;
+      padding: 1.5rem; width: 100%; max-width: 640px; margin-top: 1rem;
+    }
+    .modal h2 { font-size: 16px; font-weight: 600; margin-bottom: 1.25rem; color: #1a1a1a; }
+
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block; font-size: 12px; color: #666;
+      margin-bottom: 5px; font-weight: 500;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%; font-size: 13px; padding: 7px 10px;
+      border: 1px solid #d0cfc8; border-radius: 6px;
+      color: #1a1a1a; background: #fff; outline: none;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: #a4c0fb;
+    }
+    .field textarea { min-height: 72px; resize: vertical; }
+
+    .modal-actions {
+      display: flex; justify-content: flex-end;
+      gap: 8px; margin-top: 1.25rem; flex-wrap: wrap;
+    }
+    .btn-primary {
+      font-size: 13px; padding: 7px 16px; border-radius: 6px;
+      border: 1px solid #a4c0fb; background: #e8f0fe;
+      color: #1a56db; cursor: pointer; font-weight: 500;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-cancel {
+      font-size: 13px; padding: 7px 16px; border-radius: 6px;
+      border: 1px solid #d0cfc8; background: transparent;
+      color: #666; cursor: pointer;
+    }
+    .copied {
+      font-size: 12px; color: #16a34a; margin-left: 6px;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .copied.show { opacity: 1; }
+
+    /* ── Email shell ── */
+    .email-shell {
+      border: 1px solid #d0cfc8; border-radius: 8px;
+      overflow: hidden; margin-bottom: 1rem;
+    }
+    .email-meta {
+      background: #f5f5f2; padding: 0.75rem 1rem;
+      border-bottom: 1px solid #d0cfc8;
+    }
+    .email-meta-row {
+      display: flex; gap: 6px; margin-bottom: 4px;
+      font-size: 12px; align-items: center;
+    }
+    .email-meta-row:last-child { margin-bottom: 0; }
+    .email-meta-lbl { color: #666; min-width: 52px; font-weight: 500; }
+    .email-meta-val { flex: 1; }
+    .email-meta-val input {
+      background: transparent; border: none;
+      border-bottom: 1px solid #d0cfc8; border-radius: 0;
+      padding: 1px 2px; font-size: 12px; width: 100%;
+      color: #1a1a1a; outline: none;
+    }
+    .email-meta-val input:focus { border-bottom-color: #a4c0fb; }
+
+    .email-preview-body {
+      padding: 1.25rem; max-height: 420px;
+      overflow-y: auto; background: #fff; color: #1a1a1a;
+    }
+    .email-preview-body p {
+      margin-bottom: 10px; font-size: 13px;
+      line-height: 1.6; font-family: Arial, sans-serif;
+    }
+    .urgency {
+      color: #b91c1c; font-weight: 600; font-size: 13px; margin-bottom: 10px;
+      padding: 8px 10px; background: #fef2f2;
+      border-left: 3px solid #b91c1c; border-radius: 2px;
+      font-family: Arial, sans-serif;
+    }
+    .urgency-warn {
+      color: #92400e; font-weight: 600; font-size: 13px; margin-bottom: 10px;
+      padding: 8px 10px; background: #fffbeb;
+      border-left: 3px solid #d97706; border-radius: 2px;
+      font-family: Arial, sans-serif;
+    }
+
+    /* ── Email table ── */
+    .email-acct-table {
+      width: 100%; border-collapse: collapse;
+      margin: 12px 0; font-size: 12px; font-family: Arial, sans-serif;
+    }
+    .email-acct-table th {
+      background: #fff; color: #1a1a1a; font-weight: 700;
+      padding: 8px 12px; text-align: left;
+      border: 1.5px solid #c0bfb8; white-space: nowrap;
+    }
+    .email-acct-table td {
+      padding: 7px 12px; border: 1px solid #d1d0c8;
+      vertical-align: top; line-height: 1.4; color: #1a1a1a; background: #fff;
+    }
+    .email-acct-table tr:nth-child(even) td { background: #f5f5f2; }
+
+    .reason-pill {
+      display: inline-block; font-size: 11px; padding: 2px 8px;
+      border-radius: 3px; font-weight: 600; border: 1px solid transparent;
+    }
+    .rp-domain      { background:#dbeafe; color:#1e40af; border-color:#93c5fd; }
+    .rp-edits       { background:#ede9fe; color:#4c1d95; border-color:#c4b5fd; }
+    .rp-unresponsive{ background:#fef3c7; color:#78350f; border-color:#fcd34d; }
+    .rp-launching   { background:#dcfce7; color:#14532d; border-color:#86efac; }
+    .rp-approval    { background:#f3f4f6; color:#374151; border-color:#d1d5db; }
+    .rp-other       { background:#f3f4f6; color:#374151; border-color:#d1d5db; }
+
+    .date-overdue { color: #b91c1c; font-weight: 700; }
+    .date-soon    { color: #b45309; font-weight: 600; }
+    .date-ok      { color: #1a1a1a; }
+
+    .empty-state {
+      text-align: center; padding: 2.5rem;
+      color: #888; font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <h1>Stalled Pipeline</h1>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div class="date-picker-wrap">
+        <label for="global-date">📅 Today:</label>
+        <input type="date" id="global-date" value="2026-06-09" onchange="updateToday(this.value)" />
+      </div>
+      <button class="add-btn" onclick="openAdd()">+ Add account</button>
+    </div>
+  </div>
+
+  <div class="metrics" id="metrics"></div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('Domain',this)">Domain</button>
+    <button class="filter-btn" onclick="setFilter('Edits',this)">Edits</button>
+    <button class="filter-btn" onclick="setFilter('Unresponsive',this)">Unresponsive</button>
+    <button class="filter-btn" onclick="setFilter('Launching Today',this)">Launching Today</button>
+    <button class="filter-btn" onclick="setFilter('Other',this)">Other</button>
+  </div>
+
+  <div id="rep-sections"></div>
+  <div id="modal-root"></div>
+</div>
+
+<script>
+  /* ─────────────────────────────────────────
+     CONFIG
+  ───────────────────────────────────────── */
+  const REASONS = ['Domain','Edits','Unresponsive','Approval Needed','Launching Today','Other'];
+
+  const BADGE_CLS = {
+    'Domain':'badge-domain', 'Edits':'badge-edits',
+    'Unresponsive':'badge-unresponsive', 'Approval Needed':'badge-approval',
+    'Launching Today':'badge-launching', 'Other':'badge-other'
+  };
+  const REASON_PILL = {
+    'Domain':'rp-domain', 'Edits':'rp-edits',
+    'Unresponsive':'rp-unresponsive', 'Approval Needed':'rp-approval',
+    'Launching Today':'rp-launching', 'Other':'rp-other'
+  };
+  const PILL_INLINE = {
+    'Domain':         'background:#dbeafe;color:#1e40af;border:1px solid #93c5fd',
+    'Edits':          'background:#ede9fe;color:#4c1d95;border:1px solid #c4b5fd',
+    'Unresponsive':   'background:#fef3c7;color:#78350f;border:1px solid #fcd34d',
+    'Launching Today':'background:#dcfce7;color:#14532d;border:1px solid #86efac',
+    'Approval Needed':'background:#f3f4f6;color:#374151;border:1px solid #d1d5db',
+    'Other':          'background:#f3f4f6;color:#374151;border:1px solid #d1d5db'
+  };
+  const REP_EMAILS = {
+    'James Arpee':'james@yourcompany.com',
+    'Jack Humphries':'jack@yourcompany.com',
+    'Nate Natale':'nate@yourcompany.com',
+    'Ellyn Lindh':'ellyn@yourcompany.com',
+    'Dylan Lawson':'dylan@yourcompany.com'
+  };
+  const REP_ORDER = ['James Arpee','Jack Humphries','Nate Natale','Ellyn Lindh','Dylan Lawson'];
+
+  /* ─────────────────────────────────────────
+     STATE
+  ───────────────────────────────────────── */
+  let TODAY     = new Date('2026-06-09');
+  let TODAY_ISO = '2026-06-09';
+  let currentFilter = 'all';
+  let showLaunched  = false;
+  let nextId = 55;
+
+  function updateToday(val) {
+    TODAY     = new Date(val);
+    TODAY_ISO = val;
+    render();
+  }
+
+  /* ─────────────────────────────────────────
+     ACCOUNTS DATA
+  ───────────────────────────────────────── */
+  let accounts = [
+    // ── James Arpee ───────────────────────────────────────────────
+    {id:1,  account:'Goal Line Strategy',          rep:'James Arpee', reason:'Domain',         due:'2026-06-30', mgrNotes:'Needs domain access. Projected launch EOM.',                                                              agentNotes:'', called:false, launched:false},
+    {id:2,  account:'SEL Therapy Dog',             rep:'James Arpee', reason:'Unresponsive',   due:'2026-06-30', mgrNotes:'Marketing person unresponsive, only works Mon/Wed/Fri.',                                                   agentNotes:'', called:false, launched:false},
+    {id:3,  account:"Putt's Outdoor Serves",       rep:'James Arpee', reason:'Launching Today',due:'2026-06-09', mgrNotes:'Was scheduled to launch 6/8 — follow up to confirm launch today.',                                        agentNotes:'', called:false, launched:false},
+    {id:4,  account:'QC Mailbox',                  rep:'James Arpee', reason:'Launching Today',due:'2026-06-09', mgrNotes:'Was scheduled to launch 6/8 — follow up to confirm launch today.',                                        agentNotes:'', called:false, launched:false},
+    {id:5,  account:'Lifestyle Lumber',            rep:'James Arpee', reason:'Other',          due:'2026-06-15', mgrNotes:'Marketing person quit. New contact may downgrade services.',                                               agentNotes:'', called:false, launched:false},
+    {id:6,  account:'Chaney Appliance Repair',     rep:'James Arpee', reason:'Other',          due:'2026-06-12', mgrNotes:'Need to call 2x and set deadline.',                                                                        agentNotes:'', called:false, launched:false},
+    {id:7,  account:'Gray Matter',                 rep:'James Arpee', reason:'Edits',          due:'2026-06-20', mgrNotes:'Need photos and additional edits. Domain access obtained.',                                                agentNotes:'', called:false, launched:false},
+    {id:8,  account:'UnderCDL',                    rep:'James Arpee', reason:'Edits',          due:'2026-06-12', mgrNotes:'Stalled due to edits but ready to launch. Domain access in hand.',                                        agentNotes:'', called:false, launched:false},
+    {id:9,  account:'White Willow Designs',        rep:'James Arpee', reason:'Edits',          due:'2026-06-19', mgrNotes:'Client needs more edits. Reach out to Chasity for feedback.',                                             agentNotes:'', called:false, launched:false},
+    {id:10, account:'Aguilar Landscaping',         rep:'James Arpee', reason:'Domain',         due:'2026-06-11', mgrNotes:'Domain expected this week.',                                                                               agentNotes:'', called:false, launched:false},
+    {id:11, account:'Unique Signs & Auto Designs', rep:'James Arpee', reason:'Edits',          due:'2026-06-19', mgrNotes:"Stalled due to edits — client doesn't like website. Submit LSA request to Samantha.",                     agentNotes:'', called:false, launched:false},
+    // ── Jack Humphries ────────────────────────────────────────────
+    {id:12, account:'Guirys Coach House',          rep:'Jack Humphries', reason:'Launching Today',due:'2026-06-09', mgrNotes:'Non-site — was scheduled 6/8, confirm launch today.',                                                  agentNotes:'', called:false, launched:false},
+    {id:13, account:"Mar's Health",                rep:'Jack Humphries', reason:'Edits',          due:'2026-06-19', mgrNotes:"Doesn't like website. Provided new reference site. Jack reaching out to AE today.",                    agentNotes:'', called:false, launched:false},
+    {id:14, account:'UCDI Automotive',             rep:'Jack Humphries', reason:'Domain',         due:'2026-06-16', mgrNotes:'Stalled on domain. Call client today to finalize domain plan.',                                         agentNotes:'', called:false, launched:false},
+    {id:15, account:'L. Scott Berkoben',           rep:'Jack Humphries', reason:'Approval Needed',due:'2026-06-12', mgrNotes:'Client loves the website. Domain access obtained. Awaiting final client approval.',                    agentNotes:'', called:false, launched:false},
+    {id:16, account:'Connecticut Business Centers',rep:'Jack Humphries', reason:'Domain',         due:'2026-06-18', mgrNotes:"Call today on the reason why they didn't want to launch. Need domain access.",                          agentNotes:'', called:false, launched:false},
+    {id:17, account:'Wallace Turner Law',          rep:'Jack Humphries', reason:'Domain',         due:'2026-06-30', mgrNotes:'Need domain access from agency. Jack followed up 6/8.',                                                 agentNotes:'', called:false, launched:false},
+    {id:18, account:'AccuBooks',                   rep:'Jack Humphries', reason:'Other',          due:'',           mgrNotes:'Client wants to stall. Will reach out mid-month.',                                                      agentNotes:'', called:false, launched:false},
+    {id:19, account:"D's 4 Wheel Drive",           rep:'Jack Humphries', reason:'Edits',          due:'2026-06-19', mgrNotes:'Edits needed for 20 new pages of content.',                                                            agentNotes:'', called:false, launched:false},
+    {id:20, account:'Onyx Tint',                   rep:'Jack Humphries', reason:'Domain',         due:'2026-06-10', mgrNotes:'Domain transfer needs 2 more days.',                                                                    agentNotes:'', called:false, launched:false},
+    {id:21, account:'Northern Pump & Compression', rep:'Jack Humphries', reason:'Unresponsive',   due:'2026-06-12', mgrNotes:'Need feedback on edits. Unresponsive for 1 month. Ask Megan to text client.',                          agentNotes:'', called:false, launched:false},
+    {id:22, account:'Martellas A Customs',         rep:'Jack Humphries', reason:'Other',          due:'2026-06-12', mgrNotes:'Need TSH; good to launch on alt.',                                                                      agentNotes:'', called:false, launched:false},
+    {id:23, account:'Check Your Shorts',           rep:'Jack Humphries', reason:'Domain',         due:'2026-06-15', mgrNotes:'QA needed — send today. Need domain access. Call today.',                                               agentNotes:'', called:false, launched:false},
+    {id:24, account:'Carol Services',              rep:'Jack Humphries', reason:'Unresponsive',   due:'2026-06-12', mgrNotes:'Client out of the country for a month.',                                                                agentNotes:'', called:false, launched:false},
+    // ── Nate Natale ───────────────────────────────────────────────
+    {id:25, account:'TB Pest Solutions',           rep:'Nate Natale', reason:'Other',          due:'2026-06-12', mgrNotes:"Won't launch until license is obtained. Follow up by 6/10.",                                               agentNotes:'', called:false, launched:false},
+    {id:26, account:'RIG Lawn Care',               rep:'Nate Natale', reason:'Other',          due:'2026-06-09', mgrNotes:'Due today — deadline-driven stall. Confirm status.',                                                       agentNotes:'', called:false, launched:false},
+    {id:27, account:'Best Construction',           rep:'Nate Natale', reason:'Edits',          due:'2026-06-10', mgrNotes:'Pending edits.',                                                                                            agentNotes:'', called:false, launched:false},
+    {id:28, account:'Jordan Legal Services',       rep:'Nate Natale', reason:'Domain',         due:'2026-06-15', mgrNotes:'Domain access needed — described as very complicated.',                                                    agentNotes:'', called:false, launched:false},
+    {id:29, account:'D&D Air Duct',                rep:'Nate Natale', reason:'Domain',         due:'2026-06-12', mgrNotes:'Domain access needed. Submit LSA request to Jackson.',                                                     agentNotes:'', called:false, launched:false},
+    {id:30, account:'Tuunish',                     rep:'Nate Natale', reason:'Edits',          due:'2026-06-12', mgrNotes:'Need photos.',                                                                                              agentNotes:'', called:false, launched:false},
+    {id:31, account:'North American Security',     rep:'Nate Natale', reason:'Domain',         due:'2026-06-19', mgrNotes:'Need EPP code.',                                                                                            agentNotes:'', called:false, launched:false},
+    {id:32, account:'Phase 1 Electronics',         rep:'Nate Natale', reason:'Other',          due:'2026-06-11', mgrNotes:'Redesign complete.',                                                                                        agentNotes:'', called:false, launched:false},
+    {id:33, account:'Anchor Plumbing',             rep:'Nate Natale', reason:'Domain',         due:'2026-06-12', mgrNotes:'IT company will point domain for us.',                                                                     agentNotes:'', called:false, launched:false},
+    {id:34, account:'Leon Home',                   rep:'Nate Natale', reason:'Edits',          due:'2026-06-19', mgrNotes:"Redesign in progress. Client doesn't speak English.",                                                      agentNotes:'', called:false, launched:false},
+    {id:35, account:'EcoFit Insulation',           rep:'Nate Natale', reason:'Launching Today',due:'2026-06-09', mgrNotes:'Launching today (6/9).',                                                                                   agentNotes:'', called:false, launched:false},
+    {id:36, account:'Extreme Air Duct Cleaning',   rep:'Nate Natale', reason:'Domain',         due:'2026-06-19', mgrNotes:'Need domain access.',                                                                                      agentNotes:'', called:false, launched:false},
+    // ── Ellyn Lindh ───────────────────────────────────────────────
+    {id:37, account:'Three Links Foundation',      rep:'Ellyn Lindh', reason:'Approval Needed',due:'2026-06-12', mgrNotes:'Sent to client 6/8. AE is the point of contact.',                                                         agentNotes:'', called:false, launched:false},
+    {id:38, account:'The Med Spa of Kingwood',     rep:'Ellyn Lindh', reason:'Edits',          due:'2026-06-10', mgrNotes:'Stalled due to edits. OSS is making the edits.',                                                          agentNotes:'', called:false, launched:false},
+    {id:39, account:'Kopper Creek Building',       rep:'Ellyn Lindh', reason:'Edits',          due:'2026-06-12', mgrNotes:'Schedule edits call with client by 6/10 for content changes.',                                            agentNotes:'', called:false, launched:false},
+    {id:40, account:'Volt Edge Recycling & Circuit Breaker', rep:'Ellyn Lindh', reason:'Launching Today', due:'2026-06-09', mgrNotes:'Was scheduled 6/8 — confirm launch today.',                                                   agentNotes:'', called:false, launched:false},
+    {id:41, account:'Phillip Harris Titan Factory',rep:'Ellyn Lindh', reason:'Edits',          due:'2026-06-09', mgrNotes:'Phone number needs to be adjusted. Was due 6/8 — resolve today.',                                         agentNotes:'', called:false, launched:false},
+    {id:42, account:'Paragon Builders',            rep:'Ellyn Lindh', reason:'Other',          due:'2026-06-15', mgrNotes:'Reason unclear. Reaching out today.',                                                                      agentNotes:'', called:false, launched:false},
+    {id:43, account:'Boyd Pools',                  rep:'Ellyn Lindh', reason:'Other',          due:'2026-06-15', mgrNotes:'Reason unclear. Reaching out today.',                                                                      agentNotes:'', called:false, launched:false},
+    {id:44, account:'Orfield Design & Construction',rep:'Ellyn Lindh',reason:'Edits',          due:'2026-06-19', mgrNotes:'Redesign completing EOD 6/12.',                                                                            agentNotes:'', called:false, launched:false},
+    {id:45, account:'Premier Plumbing and Backflow',rep:'Ellyn Lindh',reason:'Edits',          due:'2026-06-10', mgrNotes:'Client needs photos of his dog added.',                                                                    agentNotes:'', called:false, launched:false},
+    {id:46, account:'Midsouth Power Solutions',    rep:'Ellyn Lindh', reason:'Other',          due:'2026-06-12', mgrNotes:'Reason unclear.',                                                                                           agentNotes:'', called:false, launched:false},
+    // ── Dylan Lawson ──────────────────────────────────────────────
+    {id:47, account:'Superior Equity',             rep:'Dylan Lawson', reason:'Other',          due:'2026-08-01', mgrNotes:"Doesn't want to launch until August. Exploring if banner can go live sooner.",                            agentNotes:'', called:false, launched:false},
+    {id:48, account:'Memphis Health Center',       rep:'Dylan Lawson', reason:'Launching Today',due:'2026-06-09', mgrNotes:'Was scheduled 6/8 — confirm launch today.',                                                              agentNotes:'', called:false, launched:false},
+    {id:49, account:'Slimesure US',                rep:'Dylan Lawson', reason:'Unresponsive',   due:'2026-06-30', mgrNotes:'Unresponsive. 4 points of contact. Client set their own deadline.',                                       agentNotes:'', called:false, launched:false},
+    {id:50, account:'Confianza Quick Access',      rep:'Dylan Lawson', reason:'Domain',         due:'2026-06-12', mgrNotes:'Need GD access via 2-step process.',                                                                      agentNotes:'', called:false, launched:false},
+    {id:51, account:'Little Star',                 rep:'Dylan Lawson', reason:'Launching Today',due:'2026-06-09', mgrNotes:'Was scheduled 6/8 — confirm launch today.',                                                              agentNotes:'', called:false, launched:false},
+    {id:52, account:'A1 Restoration',             rep:'Dylan Lawson', reason:'Domain',         due:'2026-06-15', mgrNotes:'Domain logins needed. Client expected to respond within 24 hours.',                                        agentNotes:'', called:false, launched:false},
+    {id:53, account:'Shamrock Renovations',        rep:'Dylan Lawson', reason:'Domain',         due:'2026-06-09', mgrNotes:'GD access needed — due today.',                                                                           agentNotes:'', called:false, launched:false},
+    {id:54, account:'Knockout Design',             rep:'Dylan Lawson', reason:'Domain',         due:'2026-06-15', mgrNotes:'Domain held by a previous marketing company.',                                                            agentNotes:'', called:false, launched:false},
+  ];
+
+  /* ─────────────────────────────────────────
+     HELPERS
+  ───────────────────────────────────────── */
+  function sortKey(d) { return d ? d : '2099-12-31'; }
+
+  function fmtDate(s) {
+    if (!s) return 'TBD';
+    const [y,m,d] = s.split('-');
+    return `${m}/${d}/${y}`;
+  }
+
+  function getTodayStr() { return fmtDate(TODAY_ISO); }
+
+  function dateStatus(due) {
+    if (!due) return { cls:'', tag:'', emailCls:'date-ok' };
+    const diff = Math.ceil((new Date(due) - TODAY) / (1000*60*60*24));
+    if (diff < 0)  return { cls:'overdue', tag:' ⚠',  emailCls:'date-overdue' };
+    if (diff === 0) return { cls:'soon',   tag:' 📅', emailCls:'date-soon'    };
+    if (diff <= 7)  return { cls:'soon',   tag:'',    emailCls:'date-soon'    };
+    return { cls:'', tag:'', emailCls:'date-ok' };
+  }
+
+  function initials(n) {
+    return n.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+  }
+
+  function sorted(arr) {
+    return [...arr].sort((a,b) =>
+      sortKey(a.due) < sortKey(b.due) ? -1 :
+      sortKey(a.due) > sortKey(b.due) ?  1 : 0
+    );
+  }
+
+  /* ─────────────────────────────────────────
+     EVENT HANDLERS
+  ───────────────────────────────────────── */
+  function setFilter(f, el) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    render();
+  }
+
+  function toggleLaunch(id) {
+    const a = accounts.find(x => x.id === id);
+    if (!a || a.launched) return;
+    a.launched = true;
+    a.launchedDate = TODAY_ISO;
+    render();
+  }
+
+  function toggleCalled(id) {
+    const a = accounts.find(x => x.id === id);
+    if (a) { a.called = !a.called; render(); }
+  }
+
+  function saveAgentNotes(id, val) {
+    const a = accounts.find(x => x.id === id);
+    if (a) a.agentNotes = val;
+  }
+
+  function toggleShowLaunched() { showLaunched = !showLaunched; render(); }
+
+  /* ─────────────────────────────────────────
+     RENDER HELPERS
+  ───────────────────────────────────────── */
+  function getReps() {
+    const active = accounts.filter(a =>
+      !a.launched && (currentFilter === 'all' || a.reason === currentFilter)
+    );
+    const map = {};
+    active.forEach(a => {
+      if (!map[a.rep]) map[a.rep] = { rep: a.rep, accounts: [] };
+      map[a.rep].accounts.push(a);
+    });
+    Object.values(map).forEach(r => { r.accounts = sorted(r.accounts); });
+    return REP_ORDER.filter(r => map[r]).map(r => map[r]);
+  }
+
+  function renderRow(a) {
+    const ds = dateStatus(a.due);
+    const launchBtn = a.launched
+      ? `<button class="launch-btn done" disabled title="Launched">✓</button>`
+      : `<button class="launch-btn" onclick="toggleLaunch(${a.id})" title="Mark as launched">✓</button>`;
+
+    const reasonCell = a.launched
+      ? `<span class="badge badge-launched">Launched</span>`
+      : `<span class="badge ${BADGE_CLS[a.reason] || 'badge-other'}">${a.reason}</span>`;
+
+    const dueCell = a.launched
+      ? `<span style="color:#16a34a">${fmtDate(a.launchedDate)}</span>`
+      : `<span class="${ds.cls}">${fmtDate(a.due)}${ds.tag}</span>`;
+
+    const agentCell = a.launched
+      ? `<span style="font-size:12px;color:#888">${a.agentNotes || '—'}</span>`
+      : `<textarea class="agent-notes-input"
+            placeholder="Add your notes…"
+            onchange="saveAgentNotes(${a.id},this.value)"
+            onblur="saveAgentNotes(${a.id},this.value)"
+          >${a.agentNotes}</textarea>`;
+
+    const calledCell = a.launched ? '' : `
+      <div class="called-wrap">
+        <input type="checkbox" class="called-cb"
+          ${a.called ? 'checked' : ''}
+          onchange="toggleCalled(${a.id})"
+          title="Mark as called" />
+        <span class="${a.called ? 'called-yes' : 'called-label'}">
+          ${a.called ? '✓ Called' : 'Called?'}
+        </span>
+      </div>`;
+
+    return `<tr class="${a.launched ? 'launched' : ''}">
+      <td class="col-launch">${launchBtn}</td>
+      <td class="col-account" style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${a.account}">${a.account}</td>
+      <td class="col-reason">${reasonCell}</td>
+      <td class="col-due">${dueCell}</td>
+      <td class="col-mgr"><div class="mgr-notes">${a.mgrNotes || '—'}</div></td>
+      <td class="col-agent">${agentCell}</td>
+      <td class="col-called" style="text-align:center">${calledCell}</td>
+      <td class="col-actions">
+        ${!a.launched ? `<button class="action-btn" onclick="openEdit(${a.id})" title="Edit">✏</button>` : ''}
+        <button class="action-btn" onclick="del(${a.id})" title="Remove">🗑</button>
+      </td>
+    </tr>`;
+  }
+
+  /* ─────────────────────────────────────────
+     MAIN RENDER
+  ───────────────────────────────────────── */
+  function render() {
+    renderMetrics();
+    const reps     = getReps();
+    const launched = sorted(accounts.filter(a => a.launched));
+    const container = document.getElementById('rep-sections');
+    let html = '';
+
+    if (reps.length === 0 && launched.length === 0) {
+      html = `<div class="empty-state">No accounts for this filter.</div>`;
+    } else {
+      html += reps.map(r => `
+        <div class="rep-section">
+          <div class="rep-header">
+            <div class="rep-info">
+              <div class="avatar">${initials(r.rep)}</div>
+              <div>
+                <div class="rep-name">${r.rep}</div>
+                <div class="rep-count">${r.accounts.length} account${r.accounts.length !== 1 ? 's' : ''}</div>
+              </div>
+            </div>
+            <button class="email-rep-btn" onclick="openRepEmail('${encodeURIComponent(r.rep)}')">
+              ✉ Draft digest email
+            </button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th class="col-launch"></th>
+                <th class="col-account">Account</th>
+                <th class="col-reason">Reason</th>
+                <th class="col-due">Due date ▲</th>
+                <th class="col-mgr">Manager Notes</th>
+                <th class="col-agent">Agent Notes</th>
+                <th class="col-called" style="text-align:center">Called?</th>
+                <th class="col-actions">Actions</th>
+              </tr></thead>
+              <tbody>${r.accounts.map(renderRow).join('')}</tbody>
+            </table>
+          </div>
+        </div>`).join('');
+
+      if (launched.length > 0) {
+        html += `
+          <div class="launched-section">
+            <button class="launched-toggle" onclick="toggleShowLaunched()">
+              ${showLaunched ? '▼' : '▶'} Launched accounts (${launched.length})
+            </button>
+            ${showLaunched ? `
+              <div class="table-wrap">
+                <table>
+                  <thead><tr>
+                    <th class="col-launch"></th>
+                    <th class="col-account">Account</th>
+                    <th class="col-reason">Status</th>
+                    <th class="col-due">Launched</th>
+                    <th class="col-mgr">Manager Notes</th>
+                    <th class="col-agent">Agent Notes</th>
+                    <th class="col-called"></th>
+                    <th class="col-actions">Actions</th>
+                  </tr></thead>
+                  <tbody>${launched.map(renderRow).join('')}</tbody>
+                </table>
+              </div>` : ''}
+          </div>`;
+      }
+    }
+    container.innerHTML = html;
+  }
+
+  /* ─────────────────────────────────────────
+     METRICS
+  ───────────────────────────────────────── */
+  function renderMetrics() {
+    const active       = accounts.filter(a => !a.launched);
+    const launched     = accounts.filter(a =>  a.launched).length;
+    const overdue      = active.filter(a => dateStatus(a.due).cls === 'overdue').length;
+    const domain       = active.filter(a => a.reason === 'Domain').length;
+    const edits        = active.filter(a => a.reason === 'Edits').length;
+    const unresponsive = active.filter(a => a.reason === 'Unresponsive').length;
+    const lt           = active.filter(a => a.reason === 'Launching Today').length;
+    const other        = active.filter(a => a.reason === 'Other' || a.reason === 'Approval Needed').length;
+    const called       = active.filter(a => a.called).length;
+
+    document.getElementById('metrics').innerHTML = `
+      <div class="metric"><div class="metric-label">Active stalls</div><div class="metric-val">${active.length}</div></div>
+      <div class="metric"><div class="metric-label">Overdue</div><div class="metric-val" style="color:#b91c1c">${overdue}</div></div>
+      <div class="metric"><div class="metric-label">Domain issues</div><div class="metric-val">${domain}</div></div>
+      <div class="metric"><div class="metric-label">Edits pending</div><div class="metric-val">${edits}</div></div>
+      <div class="metric"><div class="metric-label">Unresponsive</div><div class="metric-val">${unresponsive}</div></div>
+      <div class="metric"><div class="metric-label">Launching today</div><div class="metric-val" style="color:#16a34a">${lt}</div></div>
+      <div class="metric"><div class="metric-label">Other</div><div class="metric-val">${other}</div></div>
+      <div class="metric"><div class="metric-label">Called today</div><div class="metric-val" style="color:#16a34a">${called}</div></div>
+      <div class="metric"><div class="metric-label">Launched</div><div class="metric-val" style="color:#16a34a">${launched}</div></div>`;
+  }
+
+  /* ─────────────────────────────────────────
+     EMAIL
+  ───────────────────────────────────────── */
+  function buildEmailRows(accts) {
+    return sorted(accts).map(a => {
+      const ds   = dateStatus(a.due);
+      const diff = Math.ceil((new Date(a.due) - TODAY) / (1000*60*60*24));
+      const flag = ds.cls === 'overdue' ? ' ⚠ OVERDUE'
+                 : diff  === 0          ? ' (today)'
+                 : ds.cls === 'soon'    ? ' (soon)' : '';
+      const calledTag = a.called
+        ? ` <span style="font-size:10px;color:#16a34a;font-weight:600">(Called ✓)</span>` : '';
+      return `<tr>
+        <td style="font-weight:600;padding:7px 12px;border:1px solid #d1d0c8;white-space:nowrap">${a.account}${calledTag}</td>
+        <td style="padding:7px 12px;border:1px solid #d1d0c8;white-space:nowrap">
+          <span class="reason-pill ${REASON_PILL[a.reason] || 'rp-other'}">${a.reason}</span>
+        </td>
+        <td class="${ds.emailCls}" style="padding:7px 12px;border:1px solid #d1d0c8;white-space:nowrap">${fmtDate(a.due)}${flag}</td>
+        <td style="padding:7px 12px;border:1px solid #d1d0c8">${a.mgrNotes}</td>
+        <td style="padding:7px 12px;border:1px solid #d1d0c8;color:#555;font-style:italic">${a.agentNotes || '—'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function openRepEmail(repEnc) {
+    const repName  = decodeURIComponent(repEnc);
+    const repEmail = REP_EMAILS[repName] || '';
+    const accts    = accounts.filter(a => a.rep === repName && !a.launched);
+    const overdue  = accts.filter(a => dateStatus(a.due).cls === 'overdue').length;
+    const soon     = accts.filter(a => dateStatus(a.due).cls === 'soon').length;
+    const firstName = repName.split(' ')[0];
+    const todayStr  = getTodayStr();
+
+    let urgHtml = '';
+    if (overdue > 0)
+      urgHtml = `<div class="urgency">⚠ ${overdue} account${overdue>1?'s are':' is'} past due — please prioritize immediately.</div>`;
+    else if (soon > 0)
+      urgHtml = `<div class="urgency-warn">⏰ ${soon} account${soon>1?'s have':' has'} a due date within 7 days.</div>`;
+
+    document.getElementById('modal-root').innerHTML = `
+      <div class="modal-bg" onclick="closeMBg(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h2>✉ Digest email — ${repName}</h2>
+          <div class="email-shell">
+            <div class="email-meta">
+              <div class="email-meta-row">
+                <span class="email-meta-lbl">To</span>
+                <span class="email-meta-val"><input id="em-to" value="${repEmail}" /></span>
+              </div>
+              <div class="email-meta-row">
+                <span class="email-meta-lbl">Subject</span>
+                <span class="email-meta-val">
+                  <input id="em-sub" value="Action needed: your stalled accounts — ${todayStr}" />
+                </span>
+              </div>
+            </div>
+            <div class="email-preview-body" id="em-body">
+              <p style="font-family:Arial,sans-serif">Hi ${firstName},</p>
+              <p style="font-family:Arial,sans-serif">
+                Here's your stalled account summary as of ${todayStr}, sorted by due date.
+                Please prioritize the accounts at the top of the list first.
+              </p>
+              ${urgHtml}
+              <table class="email-acct-table">
+                <thead><tr>
+                  <th>Account</th>
+                  <th>Stall reason</th>
+                  <th>Due date ▲</th>
+                  <th>Manager notes</th>
+                  <th>Agent notes</th>
+                </tr></thead>
+                <tbody>${buildEmailRows(accts)}</tbody>
+              </table>
+              <p style="font-family:Arial,sans-serif">
+                For each account: reach out to the client directly, log updates in the
+                agent notes field, and flag anything blocking you so we can help.
+              </p>
+              <p style="font-family:Arial,sans-serif">Thank you for staying on top of these!</p>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeMEl()">Close</button>
+            <button class="btn-primary" onclick="copyHTML('${encodeURIComponent(repName)}')">
+              Copy HTML <span class="copied" id="cp-html">Copied!</span>
+            </button>
+            <button class="btn-primary" onclick="openMailto()">↗ Open in mail</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function copyHTML(repEnc) {
+    const repName   = decodeURIComponent(repEnc);
+    const accts     = accounts.filter(a => a.rep === repName && !a.launched);
+    const firstName = repName.split(' ')[0];
+    const overdue   = accts.filter(a => dateStatus(a.due).cls === 'overdue').length;
+    const soon      = accts.filter(a => dateStatus(a.due).cls === 'soon').length;
+    const todayStr  = getTodayStr();
+
+    let urgInline = '';
+    if (overdue > 0)
+      urgInline = `<p style="color:#b91c1c;font-weight:600;padding:8px 10px;background:#fef2f2;border-left:3px solid #b91c1c;font-family:Arial,sans-serif;font-size:13px">⚠ ${overdue} account${overdue>1?'s are':' is'} past due — please prioritize immediately.</p>`;
+    else if (soon > 0)
+      urgInline = `<p style="color:#92400e;font-weight:600;padding:8px 10px;background:#fffbeb;border-left:3px solid #d97706;font-family:Arial,sans-serif;font-size:13px">⏰ ${soon} account${soon>1?'s have':' has'} a due date within 7 days.</p>`;
+
+    const rows = sorted(accts).map((a, i) => {
+      const ds   = dateStatus(a.due);
+      const diff = Math.ceil((new Date(a.due) - TODAY) / (1000*60*60*24));
+      const flag = ds.cls === 'overdue' ? ' ⚠ OVERDUE'
+                 : diff  === 0          ? ' (today)'
+                 : ds.cls === 'soon'    ? ' (soon)' : '';
+      const dateColor = ds.cls === 'overdue' ? '#b91c1c' : ds.cls === 'soon' ? '#b45309' : '#1a1a1a';
+      const dateBold  = ds.cls !== '' ? 'font-weight:700;' : '';
+      const bg        = i % 2 === 0 ? '#ffffff' : '#f5f5f2';
+      const ps        = PILL_INLINE[a.reason] || PILL_INLINE['Other'];
+      const calledTag = a.called
+        ? ` <span style="font-size:10px;color:#16a34a;font-weight:700">(Called ✓)</span>` : '';
+      return `<tr>
+        <td style="padding:7px 12px;border:1px solid #d1d0c8;background:${bg};font-weight:600;white-space:nowrap;font-family:Arial,sans-serif;font-size:12px">${a.account}${calledTag}</td>
+        <td style="padding:7px 12px;border:1px solid #d1d0c8;background:${bg};white-space:nowrap;font-family:Arial,sans-serif;font-size:12px">
+          <span style="display:inline-block;padding:2px 8px;border-radius:3px;font-weight:600;font-size:11px;${ps}">${a.reason}</span>
+        </td>
+        <td style="padding:7px 12px;border:1px solid #d1d0c8;background:${bg};white-space:nowrap;color:${dateColor};${dateBold}font-family:Arial,sans-serif;font-size:12px">${fmtDate(a.due)}${flag}</td>
+        <td style="padding:7px 12px;border:1px solid #d1d0c8;background:${bg};font-family:Arial,sans-serif;font-size:12px">${a.mgrNotes}</td>
+        <td style="padding:7px 12px;border:1px solid #d1d0c8;background:${bg};font-family:Arial,sans-serif;font-size:12px;color:#555;font-style:italic">${a.agentNotes || '—'}</td>
+      </tr>`;
+    }).join('');
+
+    const html = `<div style="font-family:Arial,sans-serif;font-size:13px;color:#1a1a1a">
+      <p>Hi ${firstName},</p>
+      <p>Here's your stalled account summary as of ${todayStr}, sorted by due date. Please prioritize the accounts at the top first.</p>
+      ${urgInline}
+      <table style="width:100%;border-collapse:collapse;font-size:12px;font-family:Arial,sans-serif;margin:12px 0">
+        <thead><tr>
+          <th style="background:#fff;color:#1a1a1a;font-weight:700;padding:8px 12px;border:1.5px solid #c0bfb8;text-align:left;white-space:nowrap">Account</th>
+          <th style="background:#fff;color:#1a1a1a;font-weight:700;padding:8px 12px;border:1.5px solid #c0bfb8;text-align:left;white-space:nowrap">Stall reason</th>
+          <th style="background:#fff;color:#1a1a1a;font-weight:700;padding:8px 12px;border:1.5px solid #c0bfb8;text-align:left;white-space:nowrap">Due date ▲</th>
+          <th style="background:#fff;color:#1a1a1a;font-weight:700;padding:8px 12px;border:1.5px solid #c0bfb8;text-align:left">Manager notes</th>
+          <th style="background:#fff;color:#1a1a1a;font-weight:700;padding:8px 12px;border:1.5px solid #c0bfb8;text-align:left">Agent notes</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p>For each account: reach out to the client directly, log updates in the agent notes field, and flag anything blocking you so we can help.</p>
+      <p>Thank you for staying on top of these!</p>
+    </div>`;
+
+    const htmlBlob  = new Blob([html], { type: 'text/html' });
+    const plainBlob = new Blob([document.getElementById('em-body').innerText], { type: 'text/plain' });
+
+    if (window.ClipboardItem) {
+      navigator.clipboard.write([new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': plainBlob })])
+        .then(() => flash('cp-html'))
+        .catch(() => navigator.clipboard.writeText(document.getElementById('em-body').innerText)
+          .then(() => flash('cp-html')));
+    } else {
+      navigator.clipboard.writeText(document.getElementById('em-body').innerText)
+        .then(() => flash('cp-html'));
+    }
+  }
+
+  function flash(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2000);
+  }
+
+  function openMailto() {
+    const to   = document.getElementById('em-to').value;
+    const sub  = encodeURIComponent(document.getElementById('em-sub').value);
+    const body = encodeURIComponent(document.getElementById('em-body').innerText);
+    window.location.href = `mailto:${to}?subject=${sub}&body=${body}`;
+  }
+
+  /* ─────────────────────────────────────────
+     ADD / EDIT / DELETE
+  ───────────────────────────────────────── */
+  function openAdd() {
+    document.getElementById('modal-root').innerHTML = `
+      <div class="modal-bg" onclick="closeMBg(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h2>Add stalled account</h2>
+          <div class="field"><label>Account name</label><input id="f-account" placeholder="e.g. Acme Corp" /></div>
+          <div class="field">
+            <label>Rep</label>
+            <select id="f-rep">
+              ${REP_ORDER.map(r => `<option>${r}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field"><label>Rep email (optional)</label><input id="f-repemail" type="email" placeholder="rep@yourcompany.com" /></div>
+          <div class="field">
+            <label>Stall reason</label>
+            <select id="f-reason">${REASONS.map(r => `<option>${r}</option>`).join('')}</select>
+          </div>
+          <div class="field"><label>Due date</label><input id="f-due" type="date" /></div>
+          <div class="field"><label>Manager notes</label><textarea id="f-notes" placeholder="Notes for this account…"></textarea></div>
+          <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeMEl()">Cancel</button>
+            <button class="btn-primary" onclick="saveAdd()">Add account</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function saveAdd() {
+    const account = document.getElementById('f-account').value.trim();
+    if (!account) { alert('Account name is required.'); return; }
+    const rep = document.getElementById('f-rep').value;
+    accounts.push({
+      id: nextId++,
+      account,
+      rep,
+      repEmail: document.getElementById('f-repemail').value.trim() || REP_EMAILS[rep] || '',
+      reason:   document.getElementById('f-reason').value,
+      due:      document.getElementById('f-due').value || '',
+      mgrNotes: document.getElementById('f-notes').value.trim(),
+      agentNotes: '',
+      called: false,
+      launched: false
+    });
+    closeMEl();
+    render();
+  }
+
+  function openEdit(id) {
+    const a = accounts.find(x => x.id === id);
+    document.getElementById('modal-root').innerHTML = `
+      <div class="modal-bg" onclick="closeMBg(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h2>Edit account</h2>
+          <div class="field"><label>Account name</label><input id="f-account" value="${a.account}" /></div>
+          <div class="field">
+            <label>Rep</label>
+            <select id="f-rep">
+              ${REP_ORDER.map(r => `<option${r === a.rep ? ' selected' : ''}>${r}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field">
+            <label>Stall reason</label>
+            <select id="f-reason">
+              ${REASONS.map(r => `<option${r === a.reason ? ' selected' : ''}>${r}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field"><label>Due date</label><input id="f-due" type="date" value="${a.due}" /></div>
+          <div class="field"><label>Manager notes</label><textarea id="f-notes">${a.mgrNotes}</textarea></div>
+          <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeMEl()">Cancel</button>
+            <button class="btn-primary" onclick="saveEdit(${id})">Save changes</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function saveEdit(id) {
+    const idx = accounts.findIndex(x => x.id === id);
+    const rep = document.getElementById('f-rep').value;
+    accounts[idx] = {
+      ...accounts[idx],
+      account:  document.getElementById('f-account').value.trim(),
+      rep,
+      repEmail: REP_EMAILS[rep] || accounts[idx].repEmail,
+      reason:   document.getElementById('f-reason').value,
+      due:      document.getElementById('f-due').value,
+      mgrNotes: document.getElementById('f-notes').value.trim()
+    };
+    closeMEl();
+    render();
+  }
+
+  function del(id) {
+    if (!confirm('Remove this account from the stalled list?')) return;
+    accounts = accounts.filter(x => x.id !== id);
+    render();
+  }
+
+  function closeMBg(e) { if (e.target.classList.contains('modal-bg')) closeMEl(); }
+  function closeMEl()  { document.getElementById('modal-root').innerHTML = ''; }
+
+  /* ── Init ── */
+  render();
+</script>
+</body>
+</html>
