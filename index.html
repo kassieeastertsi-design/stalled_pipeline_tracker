@@ -83,98 +83,61 @@
     .col-launch{width:44px}.col-account{width:16%}.col-reason{width:13%}
     .col-due{width:11%}.col-mgr{width:17%}.col-agent{width:17%}
     .col-called{width:76px;text-align:center}.col-actions{width:80px}
-    .badge { display:inline-block; font-size:11px; padding:3px 9px; border-radius:20px; font-weight:500; white-space:nowrap; }
+    .badge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;white-space:nowrap}
     .badge-domain{background:#dbeafe;color:#1e40af}.badge-edits{background:#ede9fe;color:#4c1d95}
     .badge-unresponsive{background:#fef3c7;color:#78350f}.badge-approval{background:#f3f4f6;color:#374151}
     .badge-launching{background:#dcfce7;color:#14532d}.badge-other{background:#f3f4f6;color:#374151}
     .badge-launched{background:#dcfce7;color:#14532d}
     .overdue{color:#b91c1c!important;font-weight:600}.soon{color:#b45309!important}
-    .inline-select,.inline-date {
-      font-size:12px; border:1px solid transparent; border-radius:4px;
-      background:transparent; color:#1a1a1a; cursor:pointer;
-      padding:3px 6px; font-family:inherit; width:100%; transition:border-color .15s,background .15s;
-    }
-    .inline-select:hover,.inline-date:hover { border-color:#d0cfc8; background:#fafaf8; }
-    .inline-select:focus,.inline-date:focus { border-color:#a4c0fb; background:#fff; outline:none; }
-    .inline-date::-webkit-calendar-picker-indicator { opacity:0.5; cursor:pointer; }
-    .action-btn {
-      font-size:12px; padding:4px 9px; border-radius:5px;
-      border:1px solid #e0dfd8; background:transparent; color:#1a1a1a; cursor:pointer; margin-right:3px;
-    }
-    .action-btn:hover { background:#f3f3f0; }
-    .launch-btn {
-      font-size:15px; padding:3px 8px; border-radius:5px;
-      border:1px solid #3B6D11; background:transparent; color:#3B6D11; cursor:pointer; line-height:1; transition:background .15s;
-    }
-    .launch-btn:hover { background:#dcfce7; }
-    .launch-btn.done { background:#dcfce7; color:#14532d; border-color:#14532d; cursor:default; }
-    .mgr-notes-input,.agent-notes-input {
-      width:100%; font-size:12px; padding:5px 8px;
-      border:1px solid #e0dfd8; border-radius:5px; resize:none; min-height:38px;
-      color:#1a1a1a; background:#fff; font-family:inherit; line-height:1.4; transition:border-color .15s;
-    }
-    .mgr-notes-input:focus,.agent-notes-input:focus { outline:none; border-color:#a4c0fb; }
-    .mgr-notes-input::placeholder,.agent-notes-input::placeholder { color:#aaa; }
-    .called-wrap { display:flex; flex-direction:column; align-items:center; gap:4px; }
-    .called-cb { width:18px; height:18px; cursor:pointer; accent-color:#16a34a; }
-    .called-label { font-size:10px; color:#888; }
-    .called-yes { font-size:11px; font-weight:600; color:#16a34a; }
-    .launched-section { margin-top:1rem; }
-    .launched-toggle {
-      font-size:12px; color:#888; cursor:pointer; display:flex; align-items:center;
-      gap:5px; margin-bottom:.75rem; background:none; border:none; padding:0;
-    }
-    .launched-toggle:hover { color:#1a1a1a; }
-    .modal-bg {
-      position:fixed; inset:0; background:rgba(0,0,0,.4);
-      display:flex; align-items:flex-start; justify-content:center;
-      padding:2rem 1rem; z-index:100; overflow-y:auto;
-    }
-    .modal {
-      background:#fff; border-radius:10px; border:1px solid #e0dfd8;
-      padding:1.5rem; width:100%; max-width:640px; margin-top:1rem;
-    }
-    .modal h2 { font-size:16px; font-weight:600; margin-bottom:1.25rem; color:#1a1a1a; }
-    .field { margin-bottom:1rem; }
-    .field label { display:block; font-size:12px; color:#666; margin-bottom:5px; font-weight:500; }
-    .field input,.field select,.field textarea {
-      width:100%; font-size:13px; padding:7px 10px;
-      border:1px solid #d0cfc8; border-radius:6px; color:#1a1a1a; background:#fff; outline:none;
-    }
-    .field input:focus,.field select:focus,.field textarea:focus { border-color:#a4c0fb; }
-    .field textarea { min-height:72px; resize:vertical; }
-    .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:1.25rem; flex-wrap:wrap; }
-    .btn-primary {
-      font-size:13px; padding:7px 16px; border-radius:6px;
-      border:1px solid #a4c0fb; background:#e8f0fe; color:#1a56db; cursor:pointer; font-weight:500;
-    }
-    .btn-primary:hover { opacity:.85; }
-    .btn-cancel {
-      font-size:13px; padding:7px 16px; border-radius:6px;
-      border:1px solid #d0cfc8; background:transparent; color:#666; cursor:pointer;
-    }
-    .copied { font-size:12px; color:#16a34a; margin-left:6px; opacity:0; transition:opacity .3s; }
-    .copied.show { opacity:1; }
-    .email-shell { border:1px solid #d0cfc8; border-radius:8px; overflow:hidden; margin-bottom:1rem; }
-    .email-meta { background:#f5f5f2; padding:.75rem 1rem; border-bottom:1px solid #d0cfc8; }
-    .email-meta-row { display:flex; gap:6px; margin-bottom:4px; font-size:12px; align-items:center; }
-    .email-meta-row:last-child { margin-bottom:0; }
-    .email-meta-lbl { color:#666; min-width:52px; font-weight:500; }
-    .email-meta-val { flex:1; }
-    .email-meta-val input {
-      background:transparent; border:none; border-bottom:1px solid #d0cfc8;
-      padding:1px 2px; font-size:12px; width:100%; color:#1a1a1a; outline:none;
-    }
-    .email-meta-val input:focus { border-bottom-color:#a4c0fb; }
-    .email-preview-body { padding:1.25rem; max-height:420px; overflow-y:auto; background:#fff; }
-    .email-preview-body p { margin-bottom:10px; font-size:13px; line-height:1.6; font-family:Arial,sans-serif; }
-    .urgency { color:#b91c1c; font-weight:600; font-size:13px; margin-bottom:10px; padding:8px 10px; background:#fef2f2; border-left:3px solid #b91c1c; border-radius:2px; font-family:Arial,sans-serif; }
-    .urgency-warn { color:#92400e; font-weight:600; font-size:13px; margin-bottom:10px; padding:8px 10px; background:#fffbeb; border-left:3px solid #d97706; border-radius:2px; font-family:Arial,sans-serif; }
-    .email-acct-table { width:100%; border-collapse:collapse; margin:12px 0; font-size:12px; font-family:Arial,sans-serif; }
-    .email-acct-table th { background:#fff; color:#1a1a1a; font-weight:700; padding:8px 12px; text-align:left; border:1.5px solid #c0bfb8; white-space:nowrap; }
-    .email-acct-table td { padding:7px 12px; border:1px solid #d1d0c8; vertical-align:top; line-height:1.4; color:#1a1a1a; background:#fff; }
-    .email-acct-table tr:nth-child(even) td { background:#f5f5f2; }
-    .reason-pill { display:inline-block; font-size:11px; padding:2px 8px; border-radius:3px; font-weight:600; border:1px solid transparent; }
+    .inline-select,.inline-date{font-size:12px;border:1px solid transparent;border-radius:4px;background:transparent;color:#1a1a1a;cursor:pointer;padding:3px 6px;font-family:inherit;width:100%;transition:border-color .15s,background .15s}
+    .inline-select:hover,.inline-date:hover{border-color:#d0cfc8;background:#fafaf8}
+    .inline-select:focus,.inline-date:focus{border-color:#a4c0fb;background:#fff;outline:none}
+    .inline-date::-webkit-calendar-picker-indicator{opacity:.5;cursor:pointer}
+    .action-btn{font-size:12px;padding:4px 9px;border-radius:5px;border:1px solid #e0dfd8;background:transparent;color:#1a1a1a;cursor:pointer;margin-right:3px}
+    .action-btn:hover{background:#f3f3f0}
+    .launch-btn{font-size:15px;padding:3px 8px;border-radius:5px;border:1px solid #3B6D11;background:transparent;color:#3B6D11;cursor:pointer;line-height:1;transition:background .15s}
+    .launch-btn:hover{background:#dcfce7}
+    .launch-btn.done{background:#dcfce7;color:#14532d;border-color:#14532d;cursor:default}
+    .mgr-notes-input,.agent-notes-input{width:100%;font-size:12px;padding:5px 8px;border:1px solid #e0dfd8;border-radius:5px;resize:none;min-height:38px;color:#1a1a1a;background:#fff;font-family:inherit;line-height:1.4;transition:border-color .15s}
+    .mgr-notes-input:focus,.agent-notes-input:focus{outline:none;border-color:#a4c0fb}
+    .mgr-notes-input::placeholder,.agent-notes-input::placeholder{color:#aaa}
+    .called-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+    .called-cb{width:18px;height:18px;cursor:pointer;accent-color:#16a34a}
+    .called-label{font-size:10px;color:#888}.called-yes{font-size:11px;font-weight:600;color:#16a34a}
+    .launched-section{margin-top:1rem}
+    .launched-toggle{font-size:12px;color:#888;cursor:pointer;display:flex;align-items:center;gap:5px;margin-bottom:.75rem;background:none;border:none;padding:0}
+    .launched-toggle:hover{color:#1a1a1a}
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem;z-index:100;overflow-y:auto}
+    .modal{background:#fff;border-radius:10px;border:1px solid #e0dfd8;padding:1.5rem;width:100%;max-width:640px;margin-top:1rem}
+    .modal h2{font-size:16px;font-weight:600;margin-bottom:1.25rem;color:#1a1a1a}
+    .field{margin-bottom:1rem}
+    .field label{display:block;font-size:12px;color:#666;margin-bottom:5px;font-weight:500}
+    .field input,.field select,.field textarea{width:100%;font-size:13px;padding:7px 10px;border:1px solid #d0cfc8;border-radius:6px;color:#1a1a1a;background:#fff;outline:none}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#a4c0fb}
+    .field textarea{min-height:72px;resize:vertical}
+    .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;flex-wrap:wrap}
+    .btn-primary{font-size:13px;padding:7px 16px;border-radius:6px;border:1px solid #a4c0fb;background:#e8f0fe;color:#1a56db;cursor:pointer;font-weight:500}
+    .btn-primary:hover{opacity:.85}
+    .btn-cancel{font-size:13px;padding:7px 16px;border-radius:6px;border:1px solid #d0cfc8;background:transparent;color:#666;cursor:pointer}
+    .copied{font-size:12px;color:#16a34a;margin-left:6px;opacity:0;transition:opacity .3s}
+    .copied.show{opacity:1}
+    .email-shell{border:1px solid #d0cfc8;border-radius:8px;overflow:hidden;margin-bottom:1rem}
+    .email-meta{background:#f5f5f2;padding:.75rem 1rem;border-bottom:1px solid #d0cfc8}
+    .email-meta-row{display:flex;gap:6px;margin-bottom:4px;font-size:12px;align-items:center}
+    .email-meta-row:last-child{margin-bottom:0}
+    .email-meta-lbl{color:#666;min-width:52px;font-weight:500}
+    .email-meta-val{flex:1}
+    .email-meta-val input{background:transparent;border:none;border-bottom:1px solid #d0cfc8;padding:1px 2px;font-size:12px;width:100%;color:#1a1a1a;outline:none}
+    .email-meta-val input:focus{border-bottom-color:#a4c0fb}
+    .email-preview-body{padding:1.25rem;max-height:420px;overflow-y:auto;background:#fff}
+    .email-preview-body p{margin-bottom:10px;font-size:13px;line-height:1.6;font-family:Arial,sans-serif}
+    .urgency{color:#b91c1c;font-weight:600;font-size:13px;margin-bottom:10px;padding:8px 10px;background:#fef2f2;border-left:3px solid #b91c1c;border-radius:2px;font-family:Arial,sans-serif}
+    .urgency-warn{color:#92400e;font-weight:600;font-size:13px;margin-bottom:10px;padding:8px 10px;background:#fffbeb;border-left:3px solid #d97706;border-radius:2px;font-family:Arial,sans-serif}
+    .email-acct-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;font-family:Arial,sans-serif}
+    .email-acct-table th{background:#fff;color:#1a1a1a;font-weight:700;padding:8px 12px;text-align:left;border:1.5px solid #c0bfb8;white-space:nowrap}
+    .email-acct-table td{padding:7px 12px;border:1px solid #d1d0c8;vertical-align:top;line-height:1.4;color:#1a1a1a;background:#fff}
+    .email-acct-table tr:nth-child(even) td{background:#f5f5f2}
+    .reason-pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:3px;font-weight:600;border:1px solid transparent}
     .rp-domain{background:#dbeafe;color:#1e40af;border-color:#93c5fd}
     .rp-edits{background:#ede9fe;color:#4c1d95;border-color:#c4b5fd}
     .rp-unresponsive{background:#fef3c7;color:#78350f;border-color:#fcd34d}
@@ -182,7 +145,7 @@
     .rp-approval{background:#f3f4f6;color:#374151;border-color:#d1d5db}
     .rp-other{background:#f3f4f6;color:#374151;border-color:#d1d5db}
     .date-overdue{color:#b91c1c;font-weight:700}.date-soon{color:#b45309;font-weight:600}.date-ok{color:#1a1a1a}
-    .empty-state { text-align:center; padding:2.5rem; color:#888; font-size:14px; }
+    .empty-state{text-align:center;padding:2.5rem;color:#888;font-size:14px}
   </style>
 </head>
 <body>
@@ -212,160 +175,137 @@
 </div>
 
 <script>
-  const REASONS = ['Domain','Edits','Unresponsive','Approval Needed','Launching Today','Other'];
-  const BADGE_CLS = {'Domain':'badge-domain','Edits':'badge-edits','Unresponsive':'badge-unresponsive','Approval Needed':'badge-approval','Launching Today':'badge-launching','Other':'badge-other'};
-  const REASON_PILL = {'Domain':'rp-domain','Edits':'rp-edits','Unresponsive':'rp-unresponsive','Approval Needed':'rp-approval','Launching Today':'rp-launching','Other':'rp-other'};
-  const PILL_INLINE = {
-    'Domain':'background:#dbeafe;color:#1e40af;border:1px solid #93c5fd',
-    'Edits':'background:#ede9fe;color:#4c1d95;border:1px solid #c4b5fd',
-    'Unresponsive':'background:#fef3c7;color:#78350f;border:1px solid #fcd34d',
-    'Launching Today':'background:#dcfce7;color:#14532d;border:1px solid #86efac',
-    'Approval Needed':'background:#f3f4f6;color:#374151;border:1px solid #d1d5db',
-    'Other':'background:#f3f4f6;color:#374151;border:1px solid #d1d5db'
-  };
-  const REP_EMAILS = {'Dylan Lawson':'dylan@yourcompany.com','Ellyn Lindh':'ellyn@yourcompany.com','James Arpee':'james@yourcompany.com','Jack Humphries':'jack@yourcompany.com','Nate Natale':'nate@yourcompany.com'};
-  const REP_ORDER = ['Dylan Lawson','Ellyn Lindh','James Arpee','Jack Humphries','Nate Natale'];
+  const REASONS=['Domain','Edits','Unresponsive','Approval Needed','Launching Today','Other'];
+  const BADGE_CLS={'Domain':'badge-domain','Edits':'badge-edits','Unresponsive':'badge-unresponsive','Approval Needed':'badge-approval','Launching Today':'badge-launching','Other':'badge-other'};
+  const REASON_PILL={'Domain':'rp-domain','Edits':'rp-edits','Unresponsive':'rp-unresponsive','Approval Needed':'rp-approval','Launching Today':'rp-launching','Other':'rp-other'};
+  const PILL_INLINE={'Domain':'background:#dbeafe;color:#1e40af;border:1px solid #93c5fd','Edits':'background:#ede9fe;color:#4c1d95;border:1px solid #c4b5fd','Unresponsive':'background:#fef3c7;color:#78350f;border:1px solid #fcd34d','Launching Today':'background:#dcfce7;color:#14532d;border:1px solid #86efac','Approval Needed':'background:#f3f4f6;color:#374151;border:1px solid #d1d5db','Other':'background:#f3f4f6;color:#374151;border:1px solid #d1d5db'};
+  const REP_EMAILS={'Dylan Lawson':'dylan@yourcompany.com','Ellyn Lindh':'ellyn@yourcompany.com','James Arpee':'james@yourcompany.com','Jack Humphries':'jack@yourcompany.com','Nate Natale':'nate@yourcompany.com'};
+  const REP_ORDER=['Dylan Lawson','Ellyn Lindh','James Arpee','Jack Humphries','Nate Natale'];
 
-  let TODAY = new Date();
-  let TODAY_ISO = new Date().toISOString().split('T')[0];
-  window.addEventListener('DOMContentLoaded', () => { document.getElementById('global-date').value = TODAY_ISO; });
-  function updateToday(val) { TODAY = new Date(val); TODAY_ISO = val; render(); }
+  let TODAY=new Date();
+  let TODAY_ISO=new Date().toISOString().split('T')[0];
+  window.addEventListener('DOMContentLoaded',()=>{document.getElementById('global-date').value=TODAY_ISO;});
+  function updateToday(val){TODAY=new Date(val);TODAY_ISO=val;render();}
 
-  let currentFilter = 'all', showLaunched = false, nextId = 200;
+  let currentFilter='all',showLaunched=false,nextId=400;
 
-  let accounts = [
-    // ── Dylan Lawson (8) ──────────────────────────────────────────
-    {id:1,  account:'ARC Reprographics SJ Inc',               rep:'Dylan Lawson',  reason:'Other',  due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
-    {id:2,  account:'Elliott-Architects',                     rep:'Dylan Lawson',  reason:'Other',  due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
-    {id:3,  account:'Space Age Movers',                       rep:'Dylan Lawson',  reason:'Other',  due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
-    {id:4,  account:"Ivan's Tree Removal Services",           rep:'Dylan Lawson',  reason:'Other',  due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
-    {id:5,  account:'Affordable Tree Service',                rep:'Dylan Lawson',  reason:'Other',  due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
-    {id:6,  account:'Confianza Quick Access of Insurance Inc',rep:'Dylan Lawson',  reason:'Other',  due:'2026-06-12', mgrNotes:'Need GD access via 2-step process.',                                          agentNotes:'', called:false, launched:false},
-    {id:7,  account:'Superior Equity Restoration LLC',        rep:'Dylan Lawson',  reason:'Other',  due:'2026-08-01', mgrNotes:"Doesn't want to launch until August. Exploring if banner can go live sooner.", agentNotes:'', called:false, launched:false},
-    {id:8,  account:'Slimsure US',                            rep:'Dylan Lawson',  reason:'Other',  due:'2026-06-30', mgrNotes:'Unresponsive. 4 points of contact. Client set their own deadline.',            agentNotes:'', called:false, launched:false},
-    // ── Ellyn Lindh (27) ──────────────────────────────────────────
-    {id:9,  account:'Cornerstone Masonry',                    rep:'Ellyn Lindh',   reason:'Other',          due:'2026-06-16', mgrNotes:'Buying domain in GD due to limitations in net nation',                       agentNotes:'', called:false, launched:false},
-    {id:10, account:'Bossier Design & Flooring',              rep:'Ellyn Lindh',   reason:'Launching Today',due:'2026-06-16', mgrNotes:'Launched today!',                                                              agentNotes:'', called:false, launched:false},
-    {id:11, account:'Flush Away Septic Service',              rep:'Ellyn Lindh',   reason:'Unresponsive',   due:'2026-06-23', mgrNotes:'Sending production link to client 6/16',                                      agentNotes:'', called:false, launched:false},
-    {id:12, account:'Wyoming Longhorn Landscaping',           rep:'Ellyn Lindh',   reason:'Other',          due:'2026-06-19', mgrNotes:'All edits completed. Assuming launch 6/16',                                   agentNotes:'', called:false, launched:false},
-    {id:13, account:'3D Heating & Air',                       rep:'Ellyn Lindh',   reason:'Other',          due:'2026-06-16', mgrNotes:'IT company is pointing the records. Ellyn will call today too',              agentNotes:'', called:false, launched:false},
-    {id:14, account:'The Armory',                             rep:'Ellyn Lindh',   reason:'Other',          due:'2026-06-23', mgrNotes:'Need to setup a time for edits. Ellyn will follow up on edits call',          agentNotes:'', called:false, launched:false},
-    {id:15, account:'El Compadre Mexican Restaurant & Seafood',rep:'Ellyn Lindh',  reason:'Other',          due:'',           mgrNotes:'Call today and deadline for Monday',                                          agentNotes:'', called:false, launched:false},
-    {id:16, account:"Ronnie's Auto Collision & Towing",       rep:'Ellyn Lindh',   reason:'Other',          due:'2026-06-26', mgrNotes:'Need domain access and unresponsive for edits. Follow up this week',         agentNotes:'', called:false, launched:false},
-    {id:17, account:'PNM Drone Services',                     rep:'Ellyn Lindh',   reason:'Other',          due:'2026-06-22', mgrNotes:'Domain transfer will finish on 6/22',                                          agentNotes:'', called:false, launched:false},
-    {id:18, account:'J Chandler Law',                         rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:19, account:'Midsouth Power Solutions',               rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:20, account:'Advance Roadside Service',               rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:21, account:'Castle Builders And Roofing, LLC',       rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:22, account:'Elements Acupuncture',                   rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'Scheduled call 6/17 for edits',                                                agentNotes:'', called:false, launched:false},
-    {id:23, account:'Schuman Equipment Company',              rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:24, account:'Orfield Design & Construction, Inc.',    rep:'Ellyn Lindh',   reason:'Edits',          due:'2026-06-19', mgrNotes:'Spoke to client yesterday and will get back to us this week. FU at the end of the week', agentNotes:'', called:true, launched:false},
-    {id:25, account:'Paragon Builders',                       rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:26, account:'Liberty Paintworks',                     rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:27, account:"Shelton's Janitorial",                   rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:28, account:'Three Links Foundation',                 rep:'Ellyn Lindh',   reason:'Approval Needed',due:'2026-06-24', mgrNotes:'Board meeting on Wednesday to look at the website',                           agentNotes:'', called:false, launched:false},
-    {id:29, account:'The Pure Massage & Spa',                 rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:30, account:"Clay's Family Restaurant",               rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:31, account:'Interiors by Design',                    rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:32, account:'Collins Pristine Remodeling',            rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:33, account:'Forest City Billiards',                  rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:34, account:'Kopper Creek Building LLC',              rep:'Ellyn Lindh',   reason:'Edits',          due:'2026-06-19', mgrNotes:'Get links for Kopper Creek then they are set to launch',                      agentNotes:'', called:false, launched:false},
-    {id:35, account:'The Med Spa of Kingwood',                rep:'Ellyn Lindh',   reason:'Edits',          due:'2026-06-18', mgrNotes:'Final edits then good to launch',                                              agentNotes:'', called:false, launched:false},
-    // ── James Arpee (19) ──────────────────────────────────────────
-    {id:36, account:'850 Charters',                           rep:'James Arpee',   reason:'Other',       due:'2026-06-26', mgrNotes:'Unresponsive. Follow up 2 times then deadline',                          agentNotes:'', called:false, launched:false},
-    {id:37, account:'Winning Hand Roofing & Restoration',     rep:'James Arpee',   reason:'Edits',       due:'2026-06-19', mgrNotes:'Waiting for AE to respond then should be good to launch',                agentNotes:'', called:false, launched:false},
-    {id:38, account:'Ewing Glass & Mirror',                   rep:'James Arpee',   reason:'Domain',      due:'2026-06-18', mgrNotes:'Waiting for domain transfer to complete',                                 agentNotes:'', called:false, launched:false},
-    {id:39, account:'Chaney Appliance Repair',                rep:'James Arpee',   reason:'Other',       due:'2026-06-12', mgrNotes:'Need to call 2x and set deadline.',                                       agentNotes:'', called:false, launched:false},
-    {id:40, account:'Remarkable Detailing',                   rep:'James Arpee',   reason:'Edits',       due:'2026-06-30', mgrNotes:'Submitted edits for them. Waiting to hear feedback',                      agentNotes:'', called:false, launched:false},
-    {id:41, account:'Gray Matter',                            rep:'James Arpee',   reason:'Edits',       due:'2026-06-19', mgrNotes:'Need photos and additional edits. Domain access obtained.',               agentNotes:'', called:false, launched:false},
-    {id:42, account:'RI DoReMi Music Academy',                rep:'James Arpee',   reason:'Edits',       due:'2026-06-23', mgrNotes:'Connecting her with LSA edits call',                                       agentNotes:'', called:false, launched:false},
-    {id:43, account:'Professional Computer Systems',          rep:'James Arpee',   reason:'Domain',      due:'2026-06-23', mgrNotes:'TSH setup and domain transfer is pending.',                                agentNotes:'', called:true,  launched:false},
-    {id:44, account:'Fibre and Stem',                         rep:'James Arpee',   reason:'Edits',       due:'2026-06-17', mgrNotes:'Market client will get back to us Wednesday. Follow up tomorrow at 2-3 if...', agentNotes:'', called:false, launched:false},
-    {id:45, account:'Taste of Texarkana',                     rep:'James Arpee',   reason:'Other',       due:'2026-06-30', mgrNotes:'Waiting on photos for the website',                                       agentNotes:'', called:false, launched:false},
-    {id:46, account:'Kinetic Building Solutions',             rep:'James Arpee',   reason:'Other',       due:'2026-06-29', mgrNotes:'Client has turned unresponsive. Giving 2 weeks then we will...',         agentNotes:'', called:true,  launched:false},
-    {id:47, account:'Unique Signs and Auto Designs',          rep:'James Arpee',   reason:'Domain',      due:'2026-06-16', mgrNotes:'Transferred 1 domain and need to transfer secondary',                     agentNotes:'', called:false, launched:false},
-    {id:48, account:'The White Willow Designs',               rep:'James Arpee',   reason:'Edits',       due:'2026-06-23', mgrNotes:'7 day deadline to confirm missed edits.',                                  agentNotes:'', called:false, launched:false},
-    {id:49, account:'Wellspring Advanced Health',             rep:'James Arpee',   reason:'Other',       due:'2026-06-19', mgrNotes:'Made edits on the website, client unresponsive',                          agentNotes:'', called:false, launched:false},
-    {id:50, account:'Becoming a SEL Therapy Dog',             rep:'James Arpee',   reason:'Unresponsive',due:'2026-06-30', mgrNotes:'Marketing rep being unresponsive. Need domain access',                    agentNotes:'', called:false, launched:false},
-    {id:51, account:'Ugly Dog Day Care & Grooming',           rep:'James Arpee',   reason:'Unresponsive',due:'2026-06-19', mgrNotes:'Marketing rep being unresponsive. Need domain access',                    agentNotes:'', called:false, launched:false},
-    {id:52, account:'Stateline Carpet & Flooring',            rep:'James Arpee',   reason:'Other',       due:'2026-06-30', mgrNotes:'Becki likes the website better. Needs client approval for launch',       agentNotes:'', called:false, launched:false},
-    {id:53, account:'Lifestyle Lumber',                       rep:'James Arpee',   reason:'Other',       due:'2026-06-15', mgrNotes:'Marketing person quit. New contact may downgrade services.',             agentNotes:'', called:false, launched:false},
-    {id:54, account:'Goal Line Strategy',                     rep:'James Arpee',   reason:'Domain',      due:'2026-06-30', mgrNotes:'Needs domain access. Projected launch EOM.',                              agentNotes:'', called:true,  launched:false},
-    // ── Jack Humphries (15) ───────────────────────────────────────
-    {id:55, account:'The Diamond Bar at Devils Tower',        rep:'Jack Humphries', reason:'Other',  due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:56, account:'Cajun Conservation',                     rep:'Jack Humphries', reason:'Other',  due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:57, account:'Kraken Electric, LLC',                   rep:'Jack Humphries', reason:'Other',  due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:58, account:'Hawaii Fluid Art (Tyler)',               rep:'Jack Humphries', reason:'Other',  due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:59, account:'Connecticut Business Centers',           rep:'Jack Humphries', reason:'Domain', due:'2026-06-18', mgrNotes:"Call today on the reason why they didn't want to launch. Need domain access.", agentNotes:'', called:false, launched:false},
-    {id:60, account:'Check Your Shorts',                      rep:'Jack Humphries', reason:'Domain', due:'2026-06-15', mgrNotes:'QA needed — send today. Need domain access. Call today.',                     agentNotes:'', called:false, launched:false},
-    {id:61, account:"Mary's Health Foods",                    rep:'Jack Humphries', reason:'Edits',  due:'2026-06-19', mgrNotes:"Doesn't like website. Provided new reference site. Jack reaching out to AE today.", agentNotes:'', called:false, launched:false},
-    {id:62, account:'UCDI Automotive and Transmission',       rep:'Jack Humphries', reason:'Domain', due:'2026-06-16', mgrNotes:'Stalled on domain. Call client today to finalize domain plan.',               agentNotes:'', called:false, launched:false},
-    {id:63, account:'Martellas A. Customs, LLC',              rep:'Jack Humphries', reason:'Other',  due:'2026-06-12', mgrNotes:'Need TSH; good to launch on alt.',                                            agentNotes:'', called:false, launched:false},
-    {id:64, account:"D's 4 Wheel Drive",                      rep:'Jack Humphries', reason:'Edits',  due:'2026-06-19', mgrNotes:'Edits needed for 20 new pages of content.',                                  agentNotes:'', called:false, launched:false},
-    {id:65, account:'L. Scott Berkoben, P.A.',                rep:'Jack Humphries', reason:'Approval Needed', due:'2026-06-12', mgrNotes:'Client loves the website. Domain access obtained. Awaiting final client approval.', agentNotes:'', called:false, launched:false},
-    {id:66, account:'Carol Services LLC',                     rep:'Jack Humphries', reason:'Unresponsive', due:'2026-06-12', mgrNotes:'Client out of the country for a month.',                               agentNotes:'', called:false, launched:false},
-    {id:67, account:'Northern Pump & Compression Inc.',       rep:'Jack Humphries', reason:'Launching Today', due:'2026-06-15', mgrNotes:'Client is set to launch today.',                                    agentNotes:'', called:false, launched:false},
-    {id:68, account:'Accu Books',                             rep:'Jack Humphries', reason:'Other',  due:'',           mgrNotes:'Client wants to stall. Will reach out mid-month.',                             agentNotes:'', called:false, launched:false},
-    {id:69, account:'Wallace Turner Law',                     rep:'Jack Humphries', reason:'Domain', due:'2026-06-30', mgrNotes:'Need domain access from agency.',                                             agentNotes:'', called:false, launched:false},
-    // ── Nate Natale (16) ──────────────────────────────────────────
-    {id:70, account:'Bella Vista Construction, LLC',          rep:'Nate Natale',   reason:'Other',  due:'',           mgrNotes:'', agentNotes:'', called:false, launched:false},
-    {id:71, account:'RM Concrete Services LLC',               rep:'Nate Natale',   reason:'Other',  due:'2026-06-16', mgrNotes:'Edits are complete and getting approval',                                     agentNotes:'', called:false, launched:false},
-    {id:72, account:'Building Carolinas Construction & Remodeling', rep:'Nate Natale', reason:'Other', due:'2026-06-23', mgrNotes:'Submitted EPP code. Launch in 1 week.',                                    agentNotes:'', called:false, launched:false},
-    {id:73, account:'RenoHaven, LLC',                         rep:'Nate Natale',   reason:'Other',  due:'2026-06-30', mgrNotes:'Finished QA for redesign. Have domain access',                                agentNotes:'', called:false, launched:false},
-    {id:74, account:'Carolina Remodeling Solutions Inc',      rep:'Nate Natale',   reason:'Other',  due:'2026-06-26', mgrNotes:'Need IT person to update DNS',                                                agentNotes:'', called:false, launched:false},
-    {id:75, account:'Best Construction LLC',                  rep:'Nate Natale',   reason:'Edits',  due:'2026-06-10', mgrNotes:'Client sent more edits. Spoke 6/15, client will launch 6/18 at...',           agentNotes:'', called:true,  launched:false},
-    {id:76, account:'EcoFit Insulation LLC',                  rep:'Nate Natale',   reason:'Other',  due:'2026-06-19', mgrNotes:'Need 3 photos from the client. Text the client for those photos',            agentNotes:'', called:false, launched:false},
-    {id:77, account:'Jordan Legal Services, PLLC',            rep:'Nate Natale',   reason:'Other',  due:'2026-06-16', mgrNotes:'Had issues with her domain',                                                  agentNotes:'', called:false, launched:false},
-    {id:78, account:'Extreme Air Duct Cleaning',              rep:'Nate Natale',   reason:'Other',  due:'2026-06-16', mgrNotes:'Should be good to launch today',                                              agentNotes:'', called:false, launched:false},
-    {id:79, account:'Tuunich',                                rep:'Nate Natale',   reason:'Other',  due:'2026-06-23', mgrNotes:'Need photos from the client before we move forward. Follow up 6/18',         agentNotes:'', called:false, launched:false},
-    {id:80, account:'Cptn Bach Charters',                     rep:'Nate Natale',   reason:'Other',  due:'2026-06-30', mgrNotes:'Redesign we pushed back on with design. Need to follow up',                  agentNotes:'', called:false, launched:false},
-    {id:81, account:'Leon Home Renovation',                   rep:'Nate Natale',   reason:'Edits',  due:'2026-06-19', mgrNotes:'Got the redesign back and will coordinate a call with the seller.',           agentNotes:'', called:false, launched:false},
-    {id:82, account:'TB Pest Solutions',                      rep:'Nate Natale',   reason:'Other',  due:'2026-06-19', mgrNotes:"Won't launch until license is obtained. Follow up 6/16. Have LSA follow up", agentNotes:'', called:false, launched:false},
-    {id:83, account:'North American Security LLC',            rep:'Nate Natale',   reason:'Domain', due:'2026-06-19', mgrNotes:'Deadline for 48 hours',                                                        agentNotes:'', called:false, launched:false},
-    {id:84, account:'D&D Air Duct Pros',                      rep:'Nate Natale',   reason:'Domain', due:'2026-06-26', mgrNotes:'Domain access needed. Submit LSA request to Jackson.',                        agentNotes:'', called:false, launched:false},
-    {id:85, account:'Phase 1 Electronics',                    rep:'Nate Natale',   reason:'Other',  due:'2026-06-26', mgrNotes:'Redesign complete. 2-3 more touches then we will launch YT and email her O...', agentNotes:'', called:false, launched:false},
+  let accounts=[
+    // ── Dylan Lawson (6) ──────────────────────────────────────────
+    {id:1,  account:'Wrench Wise Plumbing',                    rep:'Dylan Lawson',  reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:2,  account:'FORGE Renovation Group',                  rep:'Dylan Lawson',  reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:3,  account:'Rare Petal',                              rep:'Dylan Lawson',  reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:4,  account:'ARC Reprographics SJ Inc',                rep:'Dylan Lawson',  reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:5,  account:'Superior Equity Restoration LLC',         rep:'Dylan Lawson',  reason:'Other',          due:'2026-08-01', mgrNotes:"Doesn't want to launch until August. Exploring if banner can go live sooner.", agentNotes:'', called:false, launched:false},
+    {id:6,  account:'Slimsure US',                             rep:'Dylan Lawson',  reason:'Other',          due:'2026-06-30', mgrNotes:'Unresponsive. 4 points of contact. Client set their own deadline.',           agentNotes:'', called:false, launched:false},
+    // ── Ellyn Lindh (23) ──────────────────────────────────────────
+    {id:7,  account:"Holley's Four Seasons Pest Solutions",    rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:8,  account:'LBL Enterprises',                         rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:9,  account:'Professional Plumbing',                   rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:10, account:'Vinyltech Signs & Graphics',              rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:11, account:'Scenic Stoneworks LLC',                   rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:12, account:'Metro Comfort Systems Heating and Air Conditioning', rep:'Ellyn Lindh', reason:'Other', due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:13, account:'Flush Away Septic Service',               rep:'Ellyn Lindh',   reason:'Unresponsive',   due:'2026-06-23', mgrNotes:'Sending production link to client 6/16',                                      agentNotes:'', called:false, launched:false},
+    {id:14, account:'Wyoming Longhorn Landscaping',            rep:'Ellyn Lindh',   reason:'Other',          due:'2026-06-19', mgrNotes:'All edits completed. Assuming launch 6/16',                                   agentNotes:'', called:false, launched:false},
+    {id:15, account:'The Armory',                              rep:'Ellyn Lindh',   reason:'Other',          due:'2026-06-23', mgrNotes:'Need to setup a time for edits. Ellyn will follow up on edits call',          agentNotes:'', called:false, launched:false},
+    {id:16, account:'El Compadre Mexican Restaurant & Seafood',rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'Call today and deadline for Monday',                                          agentNotes:'', called:false, launched:false},
+    {id:17, account:"Ronnie's Auto Collision & Towing",        rep:'Ellyn Lindh',   reason:'Other',          due:'2026-06-26', mgrNotes:'Need domain access and unresponsive for edits. Follow up this week',         agentNotes:'', called:false, launched:false},
+    {id:18, account:'Midsouth Power Solutions',                rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:19, account:'Castle Builders And Roofing, LLC',        rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:20, account:'Elements Acupuncture',                    rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'Scheduled call 6/17 for edits',                                                agentNotes:'', called:false, launched:false},
+    {id:21, account:'Schuman Equipment Company',               rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:22, account:'Orfield Design & Construction, Inc.',     rep:'Ellyn Lindh',   reason:'Edits',          due:'2026-06-19', mgrNotes:'Spoke to client yesterday and will get back to us this week. FU at the end of the week', agentNotes:'', called:true,  launched:false},
+    {id:23, account:'Paragon Builders',                        rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:24, account:'Three Links Foundation',                  rep:'Ellyn Lindh',   reason:'Approval Needed',due:'2026-06-24', mgrNotes:'Board meeting on Wednesday to look at the website.',                          agentNotes:'', called:false, launched:false},
+    {id:25, account:"Clay's Family Restaurant",                rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:26, account:'Interiors by Design',                     rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:27, account:'Forest City Billiards',                   rep:'Ellyn Lindh',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:28, account:'Kopper Creek Building LLC',               rep:'Ellyn Lindh',   reason:'Edits',          due:'2026-06-19', mgrNotes:'Get links for Kopper Creek then they are set to launch',                      agentNotes:'', called:false, launched:false},
+    {id:29, account:'The Med Spa of Kingwood',                 rep:'Ellyn Lindh',   reason:'Edits',          due:'2026-06-18', mgrNotes:'Final edits then good to launch',                                              agentNotes:'', called:false, launched:false},
+    // ── James Arpee (14) ──────────────────────────────────────────
+    {id:30, account:'JJB Handyman Service',                    rep:'James Arpee',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:31, account:'Here 2 Help Home Solutions',              rep:'James Arpee',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:32, account:'TPS Heating & Cooling',                   rep:'James Arpee',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:33, account:'Winning Hand Roofing & Restoration',      rep:'James Arpee',   reason:'Edits',          due:'2026-06-19', mgrNotes:'Waiting for AE to respond then should be good to launch',                    agentNotes:'', called:false, launched:false},
+    {id:34, account:'Remarkable Detailing',                    rep:'James Arpee',   reason:'Edits',          due:'2026-06-30', mgrNotes:'Submitted edits for them. Waiting to hear feedback',                          agentNotes:'', called:false, launched:false},
+    {id:35, account:'Gray Matter',                             rep:'James Arpee',   reason:'Edits',          due:'2026-06-19', mgrNotes:'Need photos and additional edits. Domain access obtained.',                   agentNotes:'', called:false, launched:false},
+    {id:36, account:'Fibre and Stem',                          rep:'James Arpee',   reason:'Edits',          due:'2026-06-17', mgrNotes:'Market client will get back to us Wednesday. Follow up tomorrow at 2-3 if...', agentNotes:'', called:false, launched:false},
+    {id:37, account:'Taste of Texarkana',                      rep:'James Arpee',   reason:'Other',          due:'2026-06-30', mgrNotes:'Waiting on photos for the website',                                           agentNotes:'', called:false, launched:false},
+    {id:38, account:'Kinetic Building Solutions',              rep:'James Arpee',   reason:'Other',          due:'2026-06-29', mgrNotes:'Client has turned unresponsive. Giving 2 weeks then we will...',             agentNotes:'', called:true,  launched:false},
+    {id:39, account:'Becoming a SEL Therapy Dog',              rep:'James Arpee',   reason:'Unresponsive',   due:'2026-06-30', mgrNotes:'Marketing rep being unresponsive. Need domain access',                        agentNotes:'', called:false, launched:false},
+    {id:40, account:'Ugly Dog Day Care & Grooming',            rep:'James Arpee',   reason:'Unresponsive',   due:'2026-06-19', mgrNotes:'Marketing rep being unresponsive. Need domain access',                        agentNotes:'', called:false, launched:false},
+    {id:41, account:'Stateline Carpet & Flooring',             rep:'James Arpee',   reason:'Other',          due:'2026-06-30', mgrNotes:'Becki likes the website better. Needs client approval for launch',           agentNotes:'', called:false, launched:false},
+    {id:42, account:'Lifestyle Lumber',                        rep:'James Arpee',   reason:'Other',          due:'2026-06-15', mgrNotes:'Marketing person quit. New contact may downgrade services.',                  agentNotes:'', called:false, launched:false},
+    {id:43, account:'Goal Line Strategy',                      rep:'James Arpee',   reason:'Domain',         due:'2026-06-30', mgrNotes:'Needs domain access. Projected launch EOM.',                                   agentNotes:'', called:true,  launched:false},
+    // ── Jack Humphries (14) ───────────────────────────────────────
+    {id:44, account:'DJ Tree Service',                         rep:'Jack Humphries', reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:45, account:'Queen City Lift Haus',                    rep:'Jack Humphries', reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:46, account:"Orbit's Cajun Soul",                      rep:'Jack Humphries', reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:47, account:'Scott Law Group, LLC',                    rep:'Jack Humphries', reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:48, account:'The Diamond Bar at Devils Tower',         rep:'Jack Humphries', reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:49, account:'Kraken Electric, LLC',                    rep:'Jack Humphries', reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:50, account:'Connecticut Business Centers',            rep:'Jack Humphries', reason:'Domain',         due:'2026-06-18', mgrNotes:"Call today on the reason why they didn't want to launch. Need domain access.", agentNotes:'', called:false, launched:false},
+    {id:51, account:'Check Your Shorts',                       rep:'Jack Humphries', reason:'Domain',         due:'2026-06-15', mgrNotes:'QA needed — send today. Need domain access. Call today.',                    agentNotes:'', called:false, launched:false},
+    {id:52, account:"Mary's Health Foods",                     rep:'Jack Humphries', reason:'Edits',          due:'2026-06-19', mgrNotes:"Doesn't like website. Provided new reference site. Jack reaching out to AE today.", agentNotes:'', called:false, launched:false},
+    {id:53, account:'2nd Alarm Trucking, Inc.',                rep:'Jack Humphries', reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:54, account:"D's 4 Wheel Drive",                       rep:'Jack Humphries', reason:'Edits',          due:'2026-06-19', mgrNotes:'Edits needed for 20 new pages of content.',                                  agentNotes:'', called:false, launched:false},
+    {id:55, account:'L. Scott Berkoben, P.A.',                 rep:'Jack Humphries', reason:'Approval Needed',due:'2026-06-12', mgrNotes:'Client loves the website. Domain access obtained. Awaiting final client approval.', agentNotes:'', called:false, launched:false},
+    {id:56, account:'Carol Services LLC',                      rep:'Jack Humphries', reason:'Unresponsive',   due:'2026-06-12', mgrNotes:'Client out of the country for a month.',                                     agentNotes:'', called:false, launched:false},
+    {id:57, account:'Wallace Turner Law',                      rep:'Jack Humphries', reason:'Domain',         due:'2026-06-30', mgrNotes:'Need domain access from agency.',                                             agentNotes:'', called:false, launched:false},
+    // ── Nate Natale (12) ──────────────────────────────────────────
+    {id:58, account:"Stephanie's Accounting",                  rep:'Nate Natale',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:59, account:'Armstrong Strongarm Carbon Cleaning',     rep:'Nate Natale',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:60, account:'Sundown Roofing LLC',                     rep:'Nate Natale',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:61, account:'Central States Insurance Brokers',        rep:'Nate Natale',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:62, account:'Living Well Dakota',                      rep:'Nate Natale',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:63, account:'Building Carolinas Construction & Remodeling', rep:'Nate Natale', reason:'Other',       due:'2026-06-23', mgrNotes:'Submitted EPP code. Launch in 1 week.',                                       agentNotes:'', called:false, launched:false},
+    {id:64, account:'Kimberly G. Montanari, Attorney at Law',  rep:'Nate Natale',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:65, account:'Tuunich',                                 rep:'Nate Natale',   reason:'Other',          due:'2026-06-23', mgrNotes:'Need photos from the client before we move forward. Follow up 6/18',         agentNotes:'', called:false, launched:false},
+    {id:66, account:'Cptn Bach Charters',                      rep:'Nate Natale',   reason:'Other',          due:'2026-06-30', mgrNotes:'Redesign we pushed back on with design. Need to follow up',                  agentNotes:'', called:false, launched:false},
+    {id:67, account:'Leon Home Renovation',                    rep:'Nate Natale',   reason:'Edits',          due:'2026-06-19', mgrNotes:'Got the redesign back and will coordinate a call with the seller.',           agentNotes:'', called:false, launched:false},
+    {id:68, account:'Green Toro Landscaping',                  rep:'Nate Natale',   reason:'Other',          due:'',           mgrNotes:'',                                                                              agentNotes:'', called:false, launched:false},
+    {id:69, account:'Phase 1 Electronics',                     rep:'Nate Natale',   reason:'Other',          due:'2026-06-26', mgrNotes:'Redesign complete. 2-3 more touches then we will launch YT and email her O...', agentNotes:'', called:false, launched:false},
   ];
 
-  function sortKey(d) { return d ? d : '2099-12-31'; }
-  function fmtDate(s) { if(!s) return ''; const[y,m,d]=s.split('-'); return `${m}/${d}/${y}`; }
-  function getTodayStr() { return fmtDate(TODAY_ISO); }
-  function dateStatus(due) {
-    if(!due) return {cls:'',tag:'',emailCls:'date-ok'};
+  function sortKey(d){return d?d:'2099-12-31';}
+  function fmtDate(s){if(!s)return'';const[y,m,d]=s.split('-');return`${m}/${d}/${y}`;}
+  function getTodayStr(){return fmtDate(TODAY_ISO);}
+  function dateStatus(due){
+    if(!due)return{cls:'',tag:'',emailCls:'date-ok'};
     const diff=Math.ceil((new Date(due)-TODAY)/(1000*60*60*24));
-    if(diff<0) return {cls:'overdue',tag:' ⚠',emailCls:'date-overdue'};
-    if(diff===0) return {cls:'soon',tag:' 📅',emailCls:'date-soon'};
-    if(diff<=7) return {cls:'soon',tag:'',emailCls:'date-soon'};
-    return {cls:'',tag:'',emailCls:'date-ok'};
+    if(diff<0)return{cls:'overdue',tag:' ⚠',emailCls:'date-overdue'};
+    if(diff===0)return{cls:'soon',tag:' 📅',emailCls:'date-soon'};
+    if(diff<=7)return{cls:'soon',tag:'',emailCls:'date-soon'};
+    return{cls:'',tag:'',emailCls:'date-ok'};
   }
-  function initials(n) { return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
-  function sorted(arr) { return [...arr].sort((a,b)=>sortKey(a.due)<sortKey(b.due)?-1:sortKey(a.due)>sortKey(b.due)?1:0); }
+  function initials(n){return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+  function sorted(arr){return[...arr].sort((a,b)=>sortKey(a.due)<sortKey(b.due)?-1:sortKey(a.due)>sortKey(b.due)?1:0);}
 
-  function saveReason(id,val)     { const a=accounts.find(x=>x.id===id); if(a) a.reason=val; }
-  function saveDue(id,val)        { const a=accounts.find(x=>x.id===id); if(a){a.due=val; renderMetrics();} }
-  function saveMgrNotes(id,val)   { const a=accounts.find(x=>x.id===id); if(a) a.mgrNotes=val; }
-  function saveAgentNotes(id,val) { const a=accounts.find(x=>x.id===id); if(a) a.agentNotes=val; }
-  function toggleCalled(id)       { const a=accounts.find(x=>x.id===id); if(a){a.called=!a.called; render();} }
-  function toggleLaunch(id)       { const a=accounts.find(x=>x.id===id); if(!a||a.launched)return; a.launched=true; a.launchedDate=TODAY_ISO; render(); }
-  function toggleShowLaunched()   { showLaunched=!showLaunched; render(); }
-  function setFilter(f,el)        { currentFilter=f; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); render(); }
+  function saveReason(id,val){const a=accounts.find(x=>x.id===id);if(a)a.reason=val;}
+  function saveDue(id,val){const a=accounts.find(x=>x.id===id);if(a){a.due=val;renderMetrics();}}
+  function saveMgrNotes(id,val){const a=accounts.find(x=>x.id===id);if(a)a.mgrNotes=val;}
+  function saveAgentNotes(id,val){const a=accounts.find(x=>x.id===id);if(a)a.agentNotes=val;}
+  function toggleCalled(id){const a=accounts.find(x=>x.id===id);if(a){a.called=!a.called;render();}}
+  function toggleLaunch(id){const a=accounts.find(x=>x.id===id);if(!a||a.launched)return;a.launched=true;a.launchedDate=TODAY_ISO;render();}
+  function toggleShowLaunched(){showLaunched=!showLaunched;render();}
+  function setFilter(f,el){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');render();}
 
-  function getReps() {
+  function getReps(){
     const active=accounts.filter(a=>!a.launched&&(currentFilter==='all'||a.reason===currentFilter));
     const map={};
-    active.forEach(a=>{if(!map[a.rep])map[a.rep]={rep:a.rep,accounts:[]}; map[a.rep].accounts.push(a);});
+    active.forEach(a=>{if(!map[a.rep])map[a.rep]={rep:a.rep,accounts:[]};map[a.rep].accounts.push(a);});
     Object.values(map).forEach(r=>{r.accounts=sorted(r.accounts);});
     return REP_ORDER.filter(r=>map[r]).map(r=>map[r]);
   }
 
-  function renderRow(a) {
+  function renderRow(a){
     const ds=dateStatus(a.due);
     const launchBtn=a.launched?`<button class="launch-btn done" disabled>✓</button>`:`<button class="launch-btn" onclick="toggleLaunch(${a.id})" title="Mark as launched">✓</button>`;
     const reasonCell=a.launched?`<span class="badge badge-launched">Launched</span>`:`<select class="inline-select" onchange="saveReason(${a.id},this.value)">${REASONS.map(r=>`<option value="${r}"${r===a.reason?' selected':''}>${r}</option>`).join('')}</select>`;
-    const dueCell=a.launched?`<span style="color:#16a34a">${fmtDate(a.launchedDate)}</span>`:`<input type="date" class="inline-date" value="${a.due}" onchange="saveDue(${a.id},this.value)" />${a.due?`<span class="${ds.cls}" style="font-size:11px;display:block;margin-top:2px">${fmtDate(a.due)}${ds.tag}</span>`:''}`;
+    const dueCell=a.launched?`<span style="color:#16a34a">${fmtDate(a.launchedDate)}</span>`:`<input type="date" class="inline-date" value="${a.due}" onchange="saveDue(${a.id},this.value)"/>${a.due?`<span class="${ds.cls}" style="font-size:11px;display:block;margin-top:2px">${fmtDate(a.due)}${ds.tag}</span>`:''}`;
     const mgrCell=a.launched?`<span style="font-size:12px;color:#888">${a.mgrNotes||'—'}</span>`:`<textarea class="mgr-notes-input" placeholder="Manager notes…" onchange="saveMgrNotes(${a.id},this.value)" onblur="saveMgrNotes(${a.id},this.value)">${a.mgrNotes}</textarea>`;
     const agentCell=a.launched?`<span style="font-size:12px;color:#888">${a.agentNotes||'—'}</span>`:`<textarea class="agent-notes-input" placeholder="Agent notes…" onchange="saveAgentNotes(${a.id},this.value)" onblur="saveAgentNotes(${a.id},this.value)">${a.agentNotes}</textarea>`;
-    const calledCell=a.launched?'':`<div class="called-wrap"><input type="checkbox" class="called-cb" ${a.called?'checked':''} onchange="toggleCalled(${a.id})" /><span class="${a.called?'called-yes':'called-label'}">${a.called?'✓ Called':'Called?'}</span></div>`;
-    return `<tr class="${a.launched?'launched':''}">
+    const calledCell=a.launched?'':`<div class="called-wrap"><input type="checkbox" class="called-cb" ${a.called?'checked':''} onchange="toggleCalled(${a.id})"/><span class="${a.called?'called-yes':'called-label'}">${a.called?'✓ Called':'Called?'}</span></div>`;
+    return`<tr class="${a.launched?'launched':''}">
       <td class="col-launch">${launchBtn}</td>
       <td class="col-account" style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${a.account}">${a.account}</td>
       <td class="col-reason">${reasonCell}</td>
@@ -377,14 +317,14 @@
     </tr>`;
   }
 
-  function render() {
+  function render(){
     renderMetrics();
     const reps=getReps();
     const launched=sorted(accounts.filter(a=>a.launched));
     const container=document.getElementById('rep-sections');
     let html='';
     if(reps.length===0&&launched.length===0){html=`<div class="empty-state">No accounts for this filter.</div>`;}
-    else {
+    else{
       html+=reps.map(r=>`
         <div class="rep-section">
           <div class="rep-header">
@@ -416,7 +356,7 @@
     container.innerHTML=html;
   }
 
-  function renderMetrics() {
+  function renderMetrics(){
     const active=accounts.filter(a=>!a.launched);
     const launchedCnt=accounts.filter(a=>a.launched).length;
     const overdue=active.filter(a=>dateStatus(a.due).cls==='overdue').length;
@@ -438,13 +378,13 @@
       <div class="metric"><div class="metric-label">Launched</div><div class="metric-val" style="color:#16a34a">${launchedCnt}</div></div>`;
   }
 
-  function buildEmailRows(accts) {
+  function buildEmailRows(accts){
     return sorted(accts).map(a=>{
       const ds=dateStatus(a.due);
       const diff=a.due?Math.ceil((new Date(a.due)-TODAY)/(1000*60*60*24)):null;
       const flag=ds.cls==='overdue'?' ⚠ OVERDUE':diff===0?' (today)':ds.cls==='soon'?' (soon)':'';
       const calledTag=a.called?` <span style="font-size:10px;color:#16a34a;font-weight:600">(Called ✓)</span>`:'';
-      return `<tr>
+      return`<tr>
         <td style="font-weight:600;padding:7px 12px;border:1px solid #d1d0c8;white-space:nowrap">${a.account}${calledTag}</td>
         <td style="padding:7px 12px;border:1px solid #d1d0c8;white-space:nowrap"><span class="reason-pill ${REASON_PILL[a.reason]||'rp-other'}">${a.reason}</span></td>
         <td class="${ds.emailCls}" style="padding:7px 12px;border:1px solid #d1d0c8;white-space:nowrap">${a.due?fmtDate(a.due)+flag:'TBD'}</td>
@@ -454,7 +394,7 @@
     }).join('');
   }
 
-  function openRepEmail(repEnc) {
+  function openRepEmail(repEnc){
     const repName=decodeURIComponent(repEnc);
     const repEmail=REP_EMAILS[repName]||'';
     const accts=accounts.filter(a=>a.rep===repName&&!a.launched);
@@ -463,8 +403,8 @@
     const firstName=repName.split(' ')[0];
     const todayStr=getTodayStr();
     let urgHtml='';
-    if(overdue>0) urgHtml=`<div class="urgency">⚠ ${overdue} account${overdue>1?'s are':' is'} past due — please prioritize immediately.</div>`;
-    else if(soon>0) urgHtml=`<div class="urgency-warn">⏰ ${soon} account${soon>1?'s have':' has'} a due date within 7 days.</div>`;
+    if(overdue>0)urgHtml=`<div class="urgency">⚠ ${overdue} account${overdue>1?'s are':' is'} past due — please prioritize immediately.</div>`;
+    else if(soon>0)urgHtml=`<div class="urgency-warn">⏰ ${soon} account${soon>1?'s have':' has'} a due date within 7 days.</div>`;
     document.getElementById('modal-root').innerHTML=`
       <div class="modal-bg" onclick="closeMBg(event)">
         <div class="modal" onclick="event.stopPropagation()">
@@ -495,7 +435,7 @@
       </div>`;
   }
 
-  function copyHTML(repEnc) {
+  function copyHTML(repEnc){
     const repName=decodeURIComponent(repEnc);
     const accts=accounts.filter(a=>a.rep===repName&&!a.launched);
     const firstName=repName.split(' ')[0];
@@ -503,8 +443,8 @@
     const soon=accts.filter(a=>dateStatus(a.due).cls==='soon').length;
     const todayStr=getTodayStr();
     let urgInline='';
-    if(overdue>0) urgInline=`<p style="color:#b91c1c;font-weight:600;padding:8px 10px;background:#fef2f2;border-left:3px solid #b91c1c;font-family:Arial,sans-serif;font-size:13px">⚠ ${overdue} account${overdue>1?'s are':' is'} past due — please prioritize immediately.</p>`;
-    else if(soon>0) urgInline=`<p style="color:#92400e;font-weight:600;padding:8px 10px;background:#fffbeb;border-left:3px solid #d97706;font-family:Arial,sans-serif;font-size:13px">⏰ ${soon} account${soon>1?'s have':' has'} a due date within 7 days.</p>`;
+    if(overdue>0)urgInline=`<p style="color:#b91c1c;font-weight:600;padding:8px 10px;background:#fef2f2;border-left:3px solid #b91c1c;font-family:Arial,sans-serif;font-size:13px">⚠ ${overdue} account${overdue>1?'s are':' is'} past due — please prioritize immediately.</p>`;
+    else if(soon>0)urgInline=`<p style="color:#92400e;font-weight:600;padding:8px 10px;background:#fffbeb;border-left:3px solid #d97706;font-family:Arial,sans-serif;font-size:13px">⏰ ${soon} account${soon>1?'s have':' has'} a due date within 7 days.</p>`;
     const rows=sorted(accts).map((a,i)=>{
       const ds=dateStatus(a.due);
       const diff=a.due?Math.ceil((new Date(a.due)-TODAY)/(1000*60*60*24)):null;
@@ -514,7 +454,7 @@
       const bg=i%2===0?'#ffffff':'#f5f5f2';
       const ps=PILL_INLINE[a.reason]||PILL_INLINE['Other'];
       const calledTag=a.called?` <span style="font-size:10px;color:#16a34a;font-weight:700">(Called ✓)</span>`:'';
-      return `<tr>
+      return`<tr>
         <td style="padding:7px 12px;border:1px solid #d1d0c8;background:${bg};font-weight:600;white-space:nowrap;font-family:Arial,sans-serif;font-size:12px">${a.account}${calledTag}</td>
         <td style="padding:7px 12px;border:1px solid #d1d0c8;background:${bg};white-space:nowrap;font-family:Arial,sans-serif;font-size:12px"><span style="display:inline-block;padding:2px 8px;border-radius:3px;font-weight:600;font-size:11px;${ps}">${a.reason}</span></td>
         <td style="padding:7px 12px;border:1px solid #d1d0c8;background:${bg};white-space:nowrap;color:${dateColor};${dateBold}font-family:Arial,sans-serif;font-size:12px">${a.due?fmtDate(a.due)+flag:'TBD'}</td>
